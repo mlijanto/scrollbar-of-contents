@@ -1,0 +1,77 @@
+<style>
+#container {
+	width: 300px;
+	padding: 4px 6px;
+	color: #282828;
+	font-family: arial, sans-serif;
+	font-size: 12px;
+	text-align: left;
+}
+
+.button {
+	width: 280px;
+	height: 24px;
+	padding: 10px 10px 0px;
+	background: #fff;
+	border: 1px solid #d1d1d1;
+	cursor: pointer;
+}
+
+.button .shortcut {
+	float: right;
+	color: #919191;
+}
+
+.button:hover {
+	color: #f1f1f1;
+	background: -webkit-linear-gradient( top, #888, #484848 );
+	border-color: #aaa;
+}
+
+.button:hover .shortcut {
+	color: #aaa;
+}
+
+.special_char {
+	float: none;
+	margin: 0px 2px;
+}
+
+#button_visibility {
+	border-radius: 6px 6px 0px 0px;
+}
+
+#button_state {
+	border-radius: 0px 0px 6px 6px;
+	border-top: none;
+}
+</style>
+<script>
+function toggleVisibility()
+{
+	chrome.tabs.executeScript( null,
+	{
+		code: "headingMarkers.toggleVisibility()"
+	});
+	
+	window.close();
+}
+
+function toggleDisplay()
+{
+	chrome.tabs.executeScript( null,
+	{
+		code: "headingMarkers.toggleDisplay()"
+	});
+	
+	window.close();
+}
+</script>
+<div id="container">
+	<div id="button_visibility" class="button" onclick="toggleVisibility()">
+		Show<span class="special_char">/</span>hide heading markers<span class="shortcut">Shift<span class="special_char">-</span>Alt<span class="special_char">-</span>N</span>
+	</div>
+	<div id="button_state" class="button" onclick="toggleDisplay()">
+		Minimize<span class="special_char">/</span>maximize heading markers<span class="shortcut">Shift<span class="special_char">-</span>Alt<span class="special_char">-</span>M</span>
+	</div>
+</div>

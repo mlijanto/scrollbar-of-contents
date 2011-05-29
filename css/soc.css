@@ -1,0 +1,25 @@
+.soc_marker {
+	position: fixed;
+	width: auto;
+	min-width: 8px;
+	max-width: 280px;
+	min-height: 18px;
+	right: 6px;
+	margin: 0px;
+	padding: 4px 8px 4px 8px;
+	color: #f1f1f1;
+	font-family: arial, sans-serif;
+	font-size: 11px;
+	line-height: 1.5em;
+	text-transform: capitalize;
+	background: rgba( 28, 28, 28, 0.88 );
+	-webkit-border-radius: 4px;
+	-webkit-box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
+	cursor: pointer;
+}
+
+.soc_marker_arrow {
+	position: absolute;
+	top: 7px;
+	right: -6px;
+}

@@ -1,0 +1,19 @@
+<script type="text/javascript">
+chrome.extension.onRequest.addListener( function( request, sender, sendResponse )
+{
+	if(
+		request.displayValue == "displayOption" &&
+		request.textLengthValue == "textLengthOption" &&
+		request.levelValue == "levelOption" &&
+		request.overlapValue == "overlapOption"
+		)
+		sendResponse({ 
+						displayOption: localStorage.displayOption,
+						textLengthOption: localStorage.textLengthOption,
+						levelOption: localStorage.levelOption,
+						overlapOption: localStorage.overlapOption
+					});
+	else
+		sendResponse({});
+});
+</script>

@@ -1,0 +1,29 @@
+{
+  "name": "Scrollbar of Contents",
+  "version": "0.0.1.2",
+  "description": "Generates navigable heading markers on the scrollbar.",
+  "icons": {
+  	"16": "images/icon_16.png",
+    "48": "images/icon_48.png",
+    "128": "images/icon_128.png"
+   },
+  "options_page": "options.html",
+  "background_page": "background.html",
+  "browser_action": {
+    "default_icon": "images/icon_browser.png",
+    "default_title": "Scrollbar of Contents",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["css/soc.css"],
+      "js": ["js/jquery.js", "js/jquery.scrollto.js", "js/HeadingFilters.js", "js/soc.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+    "tabs",
+    "<all_urls>"
+  ]
+}
