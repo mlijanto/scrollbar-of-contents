@@ -1,6 +1,6 @@
 {
   "name": "Scrollbar of Contents",
-  "version": "0.0.1.2",
+  "version": "0.0.1.4",
   "description": "Generates navigable heading markers on the scrollbar.",
   "icons": {
   	"16": "images/icon_16.png",
@@ -11,8 +11,7 @@
   "background_page": "background.html",
   "browser_action": {
     "default_icon": "images/icon_browser.png",
-    "default_title": "Scrollbar of Contents",
-    "default_popup": "popup.html"
+    "default_title": "Scrollbar of Contents"
   },
   "content_scripts": [
     {

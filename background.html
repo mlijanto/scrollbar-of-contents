@@ -16,4 +16,19 @@ chrome.extension.onRequest.addListener( function( request, sender, sendResponse 
 	else
 		sendResponse({});
 });
+
+chrome.tabs.onSelectionChanged.addListener( function( tabID, selectInfo )
+{
+	chrome.tabs.sendRequest( tabID, { tabEvent: "selectionChanged" } );
+});
+
+chrome.tabs.onUpdated.addListener( function( tabID, changeInfo, tab )
+{
+	chrome.tabs.sendRequest( tabID, { tabEvent: "updated" } );
+});
+
+chrome.browserAction.onClicked.addListener( function( tab )
+{
+	chrome.tabs.executeScript( null, { code: "headingMarkers.toggleVisibility()" } );
+});
 </script>

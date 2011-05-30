@@ -183,7 +183,7 @@
 			var overlapValue = localStorage[ "overlapOption" ];
 			
 			if ( !displayValue )
-				displayValue = "maximized";
+				displayValue = "hidden";
 			
 			if ( !textLengthValue )
 				textLengthValue = "entireText";
@@ -239,7 +239,7 @@
 			var level = document.getElementById("level");
 			var overlap = document.getElementById("overlap");
 			
-			var displayValue = "maximized";
+			var displayValue = "hidden";
 			var textLengthValue = "entireText";
 			var levelValue = "3";
 			var overlapValue = true;
@@ -286,15 +286,15 @@
 		<form>
 			<label for="display">When a page loads,</label>
 			<br />
-			<select id="display">
+			<select id="display" onchange="saveOptions()">
 				<option value="maximized">show markers on scrollbar</option>
 				<option value="minimized">show minimized markers on scrollbar</option>
 				<option value="hidden">hide markers</option>
 			</select>
 			<br />
-			<label for="textLength">On each heading marker,</label>
+			<label for="textLength">On each maximized marker,</label>
 			<br />
-			<select id="textLength">
+			<select id="textLength" onchange="saveOptions()">
 				<option value="entireText">show the entire heading text</option>
 				<option value="firstThreeWords">show the first three words</option>
 				<option value="firstTenCharacters">show the first ten characters</option>
@@ -302,7 +302,7 @@
 			<br />
 			<label for="level">Levels of headings shown:</label>
 			<br />
-			<select id="level">
+			<select id="level" onchange="saveOptions()">
 				<option value="1">1</option>
 				<option value="2">2</option>
 				<option value="3">3 (recommended)</option>
@@ -318,9 +318,8 @@
 				</div>
 			</div>
 			<br />
-			<input id="overlap" type="checkbox"> Prevent overlapping markers if possible</input>
+			<input id="overlap" type="checkbox" onchange="saveOptions()"> Prevent overlapping markers if possible</input>
 			<br />
-			<button onclick="saveOptions()">Save Options</button>
 			<button onclick="restoreDefault()">Restore Default</button>
 		</form>
 	</div>

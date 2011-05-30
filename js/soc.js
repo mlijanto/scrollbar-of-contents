@@ -15,68 +15,122 @@ $(document).ready(function() {
 	var markerBackgroundColor = "rgba( 28, 28, 28, 0.88 )";
 	var markerOverBackgroundColor = "-webkit-linear-gradient( top, #fafafa, #d1d1d1 )";
 	
+	var newPageLoad = true;
+	
+	// user customizable variables
+	var defaultDisplay, socMarkerVisibility, socMarkerDisplay, textLength, maxHeadingHierarchy, preventOverlap;
+	
+	/*------------------------------------------------
+	  Listen if tab is updated or if tab selection is 
+	  changed to keep tab data up to date and to make
+	  options page changes take effect immediately.
+	------------------------------------------------*/
+	
+	chrome.extension.onRequest.addListener( function( request, sender, sendResponse )
+	{
+		if( request.tabEvent == "selectionChanged" )
+		{
+			newPageLoad = false;
+			
+			retrieveOptions();
+			
+			sendResponse({});
+		}
+		else if( request.tabEvent == "updated" )
+		{
+			newPageLoad = false;
+			
+			init();
+			
+			sendResponse({});
+		}
+		else
+			// close request
+			sendResponse({});
+	});
 	
 	/*------------------------------------------------
 	  Retrieve user preferences from local storage
 	  then initialize heading markers
 	------------------------------------------------*/
 	
-	var defaultDisplay, socMarkerVisibility, socMarkerDisplay, textLength, maxHeadingHierarchy, preventOverlap;
+	retrieveOptions();
 	
-	chrome.extension.sendRequest( { displayValue: "displayOption", textLengthValue: "textLengthOption", levelValue: "levelOption", overlapValue: "overlapOption" },
-		function( response )
-		{
-			defaultDisplay = response.displayOption;
-			textLength = response.textLengthOption;
-			maxHeadingHierarchy = response.levelOption;
-			
-			if( !defaultDisplay )
-				defaultDisplay = "maximized";
-			
-			if( !textLength )
-				textLength = "entireText";
-			
-			if( !maxHeadingHierarchy )		
-				maxHeadingHierarchy = "3";
-			
-			if( response.overlapOption == "true" )
-				preventOverlap = true;
-			else if( response.overlapOption == "false" )
-				preventOverlap = false;
-			else
-				preventOverlap = true;		
-			
-			switch( defaultDisplay )
+	function retrieveOptions()
+	{
+		chrome.extension.sendRequest( { displayValue: "displayOption", textLengthValue: "textLengthOption", levelValue: "levelOption", overlapValue: "overlapOption" },
+			function( response )
 			{
-				case "maximized":
-					socMarkerVisibility = "visible";
-					socMarkerDisplay = "maximized";
-					break;
+				defaultDisplay = response.displayOption;
+				textLength = response.textLengthOption;
+				maxHeadingHierarchy = response.levelOption;
 				
-				case "minimized":
-					socMarkerVisibility = "visible";
-					socMarkerDisplay = "minimized";
-					break;
+				if( !defaultDisplay )
+					defaultDisplay = "hidden";
 				
-				case "hidden":
-					socMarkerVisibility = "hidden";
-					socMarkerDisplay = "maximized";
-					break;
+				if( !textLength )
+					textLength = "entireText";
+				
+				if( !maxHeadingHierarchy )		
+					maxHeadingHierarchy = "3";
+				
+				if( response.overlapOption == "true" )
+					preventOverlap = true;
+				else if( response.overlapOption == "false" )
+					preventOverlap = false;
+				else
+					preventOverlap = true;		
+				
+				switch( defaultDisplay )
+				{
+					case "maximized":
+						socMarkerVisibility = "visible";
+						socMarkerDisplay = "maximized";
+						break;
+					
+					case "minimized":
+						socMarkerVisibility = "visible";
+						socMarkerDisplay = "minimized";
+						break;
+					
+					case "hidden":
+						socMarkerVisibility = "hidden";
+						socMarkerDisplay = "maximized";
+						break;
+				}
+				
+				init();
 			}
-			
-			init();		
-		}
-	);
+		);
+	}
 	
 	function init()
 	{
-		headingMarkers = new HeadingMarkers();
-		headingFilters = new HeadingFilters();
+		/*------------------------------------------------
+		  Delete existing heading markers if they are
+		  already created then instantiate new objects.
+		------------------------------------------------*/
+		
+		if( typeof headingMarkers === "undefined" )
+		{
+			headingMarkers = new HeadingMarkers();
+			headingFilters = new HeadingFilters();
+		}
+		else
+		{
+			$(".soc_marker").remove();
+		
+			delete headingMarkers;
+			delete headingFilters;
+			
+			headingMarkers = new HeadingMarkers();
+			headingFilters = new HeadingFilters();
+		}
 		
 		
 		/*------------------------------------------------
-		  Check if headings exist and create markers
-		  if they do.
+		  Check if headings exist on the page and 
+		  create markers if they do.
 		------------------------------------------------*/
 		
 		for( var i = 0; i < maxHeadingHierarchy; i++ )
@@ -88,10 +142,11 @@ $(document).ready(function() {
 		
 		
 		/*------------------------------------------------
-		  Create keyboard shortcuts
+		  Create keyboard shortcuts.
 		------------------------------------------------*/
 		
-		document.addEventListener( "keydown", headingMarkers.keyDownHandler, false );
+		if( newPageLoad )
+			document.addEventListener( "keydown", headingMarkers.keyDownHandler, false );
 		
 		
 		/*------------------------------------------------
@@ -101,8 +156,11 @@ $(document).ready(function() {
 		------------------------------------------------*/
 		
 		headingMarkers.setPosition();
-		window.onresize = function() { headingMarkers.setPosition() };
-		window.setInterval( checkDocumentHeight, 100 );
+		if( newPageLoad )
+		{
+			window.onresize = function() { headingMarkers.setPosition() };
+			window.setInterval( checkDocumentHeight, 100 );
+		}
 		
 		
 		/*------------------------------------------------
@@ -111,8 +169,13 @@ $(document).ready(function() {
 		
 		if( socMarkerVisibility == "visible" )
 		{
-			$(".soc_marker").css( { "display": "block", "opacity": "0" } );
-			$(".soc_marker").animate( { "opacity": "1" }, MARKER_TRANSFORM_DURATION );
+			if( newPageLoad )
+			{
+				$(".soc_marker").css( { "display": "block", "opacity": "0" } );
+				$(".soc_marker").animate( { "opacity": "1" }, MARKER_TRANSFORM_DURATION );
+			}
+			else
+				$(".soc_marker").css( { "display": "block", "opacity": "1" } );
 		}
 	}
 	
@@ -133,7 +196,7 @@ $(document).ready(function() {
 		
 		this.init = function( headingTagName )
 		{
-			var headings  = document.getElementsByTagName( headingTagName );
+			var headings = document.getElementsByTagName( headingTagName );
 			
 			for( var i = 0; i < headings.length; i++ )
 			{
@@ -179,8 +242,9 @@ $(document).ready(function() {
 				if( filteredHeading.markHeading == true )
 				{
 					var markerID = "soc_" + headingTagName + "_" + ( i + 1 );
-					var headingY =  $( headings[ i ] ).position().top;
-					
+					//var headingY =  $( headings[ i ] ).position().top;
+					var headingY = headingMarkers.findPosition( headings[ i ] ).topPos;
+										
 					
 					/*------------------------------------------------
 					  Add a new class to each marked heading
@@ -189,12 +253,16 @@ $(document).ready(function() {
 					var headingExistingClass, headingNewClass;
 					if( headings[ i ].getAttribute( "class" ) != null )
 					{
-						headingExistingClass = headings[ i ].getAttribute( "class" );
-						headingNewClass = headingExistingClass + " soc_target";
+						// only add a new class name if heading is not already marked
+						if( headings[ i ].getAttribute( "class" ).indexOf( "soc_target" ) == -1 )
+						{
+							headingExistingClass = headings[ i ].getAttribute( "class" );
+							headingNewClass = headingExistingClass + " soc_target";
+						}
 					}
 					else
 					{
-						headingNewClass = " soc_target";
+						headingNewClass = "soc_target";
 					}
 					headings[ i ].setAttribute( "class", headingNewClass );
 					
@@ -265,6 +333,20 @@ $(document).ready(function() {
 			return newMarker;
 		}
 		
+		this.findPosition = function( obj )
+		{
+			leftPos = topPos = 0;
+			
+			do
+			{
+				leftPos += obj.offsetLeft;
+				topPos += obj.offsetTop;
+			}
+			while (obj = obj.offsetParent);
+			
+			return { "leftPos": leftPos, "topPos": topPos };
+		}
+		
 		this.setPosition = function()
 		{
 			var windowHeight = $(window).height();
@@ -283,7 +365,7 @@ $(document).ready(function() {
 				  Update each marker's targetY
 				------------------------------------------------*/
 				
-				var newTargetY = $( headingMarkers[ markerID ].domObject ).position().top;
+				var newTargetY = headingMarkers.findPosition( headingMarkers[ markerID ].domObject ).topPos;
 								
 				headingMarkers[ markerID ].targetY = newTargetY;
 				
@@ -415,20 +497,7 @@ $(document).ready(function() {
 			}
 			else if( socMarkerDisplay == "minimized" )
 			{	
-				/*------------------------------------------------
-				  Populate each marker's inner html
-				------------------------------------------------*/
-				
-				var markerNum = socMarkerIDArray.length;
-				
-				for( var i = 0; i < markerNum; i++ )
-				{
-					
-					var markerID = socMarkerIDArray[ i ];
-					var markerHashID = "#" + markerID;
-					
-					$(".soc_marker_span").css( { "display": "inline" } );
-				}
+				$(".soc_marker_span").css( { "display": "inline" } );
 				
 				socMarkerDisplay = "maximized";
 			}
