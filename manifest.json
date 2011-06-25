@@ -1,6 +1,6 @@
 {
   "name": "Scrollbar of Contents",
-  "version": "0.0.1.4",
+  "version": "0.0.1.6",
   "description": "Generates navigable heading markers on the scrollbar.",
   "icons": {
   	"16": "images/icon_16.png",

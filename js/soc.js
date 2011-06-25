@@ -242,29 +242,7 @@ $(document).ready(function() {
 				if( filteredHeading.markHeading == true )
 				{
 					var markerID = "soc_" + headingTagName + "_" + ( i + 1 );
-					//var headingY =  $( headings[ i ] ).position().top;
 					var headingY = headingMarkers.findPosition( headings[ i ] ).topPos;
-										
-					
-					/*------------------------------------------------
-					  Add a new class to each marked heading
-					------------------------------------------------*/		
-					
-					var headingExistingClass, headingNewClass;
-					if( headings[ i ].getAttribute( "class" ) != null )
-					{
-						// only add a new class name if heading is not already marked
-						if( headings[ i ].getAttribute( "class" ).indexOf( "soc_target" ) == -1 )
-						{
-							headingExistingClass = headings[ i ].getAttribute( "class" );
-							headingNewClass = headingExistingClass + " soc_target";
-						}
-					}
-					else
-					{
-						headingNewClass = "soc_target";
-					}
-					headings[ i ].setAttribute( "class", headingNewClass );
 					
 					
 					/*------------------------------------------------
@@ -332,6 +310,14 @@ $(document).ready(function() {
 			
 			return newMarker;
 		}
+		
+		
+		/*------------------------------------------------
+		  findPosition()
+		  
+		  Finds an html element's position relative to 
+		  the document.
+		------------------------------------------------*/
 		
 		this.findPosition = function( obj )
 		{
@@ -445,7 +431,7 @@ $(document).ready(function() {
 		
 		this.keyDownHandler = function ( e )
 		{
-			// ctrl-alt-m
+			// shift-alt-m
 			if( e.keyCode == 77 )
 			{
 				if( e.shiftKey && e.altKey )
@@ -455,7 +441,7 @@ $(document).ready(function() {
 					headingMarkers.toggleDisplay();
 				}
 			}
-			// ctrl-alt-n
+			// shift-alt-n
 			else if( e.keyCode == 78 )
 			{
 				if( e.shiftKey && e.altKey )
@@ -532,34 +518,5 @@ $(document).ready(function() {
 	    arrowCtx.fill();
 	
 	    return arrowCanvas;
-	}
-	
-	
-	/*------------------------------------------------
-	  findPosition()
-	  
-	  Finds an html element's position relative to 
-	  the document.
-	------------------------------------------------*/
-	
-	function findPosition( obj )
-	{
-		var objLeft = objTop = 0;
-		
-		if( obj.offsetParent )
-		{
-			do
-			{
-				objLeft += obj.offsetLeft;
-				objTop += obj.offsetTop;
-			}
-			while ( obj = obj.offsetParent );
-		}
-		
-		objPos = new Object();
-		objPos.left = objLeft;
-		objPos.top = objTop;
-		
-		return objPos;
 	}
 });
