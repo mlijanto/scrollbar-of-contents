@@ -3,14 +3,14 @@
 	<title>Scrollbar of Contents Options</title>
 	<style type="text/css">
 		body {
-			background: -webkit-radial-gradient( center 0px, circle farthest-corner, #f1f1f1 48%, #c1c1c1 100% );
+			background: -webkit-radial-gradient( center 0px, circle farthest-corner, #f1f1f1 48%, #d8d8d8 100% );
 		}
 		
 		#container {
 			position: relative;
-			width: 348px;
+			width: 380px;
 			margin: 80px auto;
-			padding: 28px 40px 48px;
+			padding: 36px 40px 48px;
 			text-align: center;
 			color: #484848;
 			text-shadow: 0px 1px 0px #fff;
@@ -34,30 +34,29 @@
 		}
 		
 		form {
-			width: 320px;
-			margin: 36px 0px 0px 24px;
+			width: 328px;
+			margin: 48px 0px 0px 36px;
 			text-align: left;
 		}
 		
 		select {
-			width: 248px;
+			width: 280px;
 			height: 23px;
 			color: #484848;
 			margin: 8px 0px 28px;
-			padding: 28px;
 			background: -webkit-linear-gradient( top, #fff, #fff );
 			border: 1px solid #b1b1b1;
 			cursor: pointer;
 		}
 		
 		input[ type = checkbox ] {
-			margin: 8px 0px 20px 2px;
+			margin: 10px 0px 8px 2px;
 		}
 		
 		button {
 			width: 140px;
 			height: 40px;
-			margin: 13px 15px 0px -1px;
+			margin: 28px 15px 0px -1px;
 			padding: 8px 13px 9px;
 			color: #484848;
 			text-shadow: 0px 1px 0px #fff;
@@ -73,10 +72,10 @@
 			box-shadow: 0px -1px 1px #fff, 0px 1px 1px #888;
 		}
 		
-		#info_level {
+		#info_level_container {
 			position: absolute;
-			top: 279px;
-			left: 318px;
+			top: 300px;
+			left: 364px;
 		}
 		
 		#info_level_icon {
@@ -137,6 +136,28 @@
 			-webkit-border-radius: 8px;
 			-webkit-box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
 		}
+		
+		#info_keyboard_shortcut_container {
+			width: 313px;
+			margin: 42px 0px 8px -2px;
+			padding: 13px 0px 0px 2px;
+			color: #888;
+			border-top: 1px solid #d8d8d8;
+		}
+		
+		#info_keyboard_shortcut_container ul {
+			margin: 0px;
+			padding: 0px 0px 0px 20px;
+		}
+		
+		#info_keyboard_shortcut_container li {
+			margin: 0px 0px 8px;
+			padding: 0px;
+		}
+		
+		#info_keyboard_shortcut_container li span {
+			margin: 0px 2px;
+		}
 	</style>
 	<script type="text/javascript">
 	
@@ -157,16 +178,19 @@
 			var textLength = document.getElementById("textLength");
 			var level = document.getElementById("level");
 			var overlap = document.getElementById("overlap");
+			//var toggleVisibityOnHover = document.getElementById("toggleVisibityOnHover");
 			
 			var displayValue = display.children[ display.selectedIndex ].value;
 			var textLengthValue = textLength.children[ textLength.selectedIndex ].value;
 			var levelValue = level.children[ level.selectedIndex ].value;
 			var overlapValue = overlap.checked;
+			//var toggleVisibityOnHoverValue = toggleVisibityOnHover.checked;
 			
 			localStorage[ "displayOption" ] = displayValue;
 			localStorage[ "textLengthOption" ] = textLengthValue;
 			localStorage[ "levelOption" ] = levelValue;
 			localStorage[ "overlapOption" ] = overlapValue;
+			//localStorage[ "toggleVisibityOnHoverOption" ] = toggleVisibityOnHoverValue;
 		}
 		
 		// Restores saved values from localStorage.
@@ -176,11 +200,13 @@
 			var textLength = document.getElementById("textLength");
 			var level = document.getElementById("level");
 			var overlap = document.getElementById("overlap");
+			//var toggleVisibityOnHover = document.getElementById("toggleVisibityOnHover");
 			
 			var displayValue = localStorage[ "displayOption" ];
 			var textLengthValue = localStorage[ "textLengthOption" ];
 			var levelValue = localStorage[ "levelOption" ];
 			var overlapValue = localStorage[ "overlapOption" ];
+			//var toggleVisibityOnHoverValue = localStorage[ "toggleVisibityOnHoverOption" ];
 			
 			if ( !displayValue )
 				displayValue = "hidden";
@@ -230,24 +256,31 @@
 				overlapValue = true;
 				overlap.checked = true;
 			}
+			
+			/*if( toggleVisibityOnHoverValue == "true" )
+				toggleVisibityOnHover.checked = true;
+			else if( toggleVisibityOnHover == "false" )
+				toggleVisibityOnHover.checked = false;
+			else
+			{
+				toggleVisibityOnHoverValue = false
+				toggleVisibityOnHover.checked = false;
+			}*/
 		}
 		
 		function restoreDefault()
 		{
-			var display = document.getElementById("display");
-			var textLength = document.getElementById("textLength");
-			var level = document.getElementById("level");
-			var overlap = document.getElementById("overlap");
-			
 			var displayValue = "hidden";
 			var textLengthValue = "entireText";
 			var levelValue = "3";
 			var overlapValue = true;
+			//var toggleVisibityOnHoverValue = false;
 			
 			localStorage[ "displayOption" ] = displayValue;
 			localStorage[ "textLengthOption" ] = textLengthValue;
 			localStorage[ "levelOption" ] = levelValue;
 			localStorage[ "overlapOption" ] = overlapValue;
+			//localStorage[ "toggleVisibityOnHoverOption" ] = toggleVisibityOnHoverValue;
 		}
 		
 		function drawInfoArrow()
@@ -310,7 +343,7 @@
 				<option value="5">5</option>
 				<option value="6">6</option>
 			</select>
-			<div id="info_level">
+			<div id="info_level_container">
 				<div id="info_level_icon"></div>
 				<div id="info_container">
 					There are six levels of headings in web pages, from 1 as the most important to 6 as the least important.
@@ -320,7 +353,16 @@
 			<br />
 			<input id="overlap" type="checkbox" onchange="saveOptions()"> Prevent overlapping markers if possible</input>
 			<br />
+			<!--<input id="toggleVisibityOnHover" type="checkbox" onchange="saveOptions()"> Show markers when cursor hovers near scrollbar</input>
+			<br />-->
 			<button onclick="restoreDefault()">Restore Default</button>
+			<div id="info_keyboard_shortcut_container">
+				<p>Keyboard shortcuts:</p>
+				<ul>
+					<li>Minimize<span>/</span>maximize markers ( Shift-Alt-M )</li>
+					<li>Show<span>/</span>hide markers ( Shift-Alt-N )</li>
+				</ul>
+			</div>
 		</form>
 	</div>
 </body>

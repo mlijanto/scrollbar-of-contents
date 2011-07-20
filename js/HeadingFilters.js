@@ -62,6 +62,15 @@ function HeadingFilters()
 				markHeading = true;
 			}
 		}
+		else if( locationHost.indexOf( "wikia.com" ) != -1 )
+		{
+			// Remove "Edit" in wikia.com's wikis headings
+					
+			var newHeadingText = headingText.replace( /edit/i, "" );
+			filteredHeadingText = newHeadingText;
+			
+			markHeading = true;
+		}
 		else
 		{	
 			filteredHeadingText = headingText;

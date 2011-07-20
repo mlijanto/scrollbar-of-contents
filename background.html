@@ -1,18 +1,64 @@
 <script type="text/javascript">
 chrome.extension.onRequest.addListener( function( request, sender, sendResponse )
 {
-	if(
-		request.displayValue == "displayOption" &&
-		request.textLengthValue == "textLengthOption" &&
-		request.levelValue == "levelOption" &&
-		request.overlapValue == "overlapOption"
-		)
+	var visibilityItemName, displayItemName, hostNameVisibilityOverride, hostNameDisplayOverride;
+	
+	if( request.query == "getUserOptions" )
+	{
+		visibilityItemName = request.hostName + "_visibilityOverride";
+		displayItemName = request.hostName + "_displayOverride";
+		
+		if( localStorage[ visibilityItemName ] || localStorage[ displayItemName ] )
+		{
+			hostNameVisibilityOverride = localStorage[ visibilityItemName ];
+			hostNameDisplayOverride = localStorage[ displayItemName ];
+		}
+		else
+		{
+			hostNameVisibilityOverride = false;
+			hostNameDisplayOverride = false;
+		}
+		
 		sendResponse({ 
 						displayOption: localStorage.displayOption,
 						textLengthOption: localStorage.textLengthOption,
 						levelOption: localStorage.levelOption,
-						overlapOption: localStorage.overlapOption
+						overlapOption: localStorage.overlapOption,
+						//toggleVisibityOnHoverOption: localStorage.toggleVisibityOnHoverOption,
+						hostNameVisibilityOverride: hostNameVisibilityOverride,
+						hostNameDisplayOverride: hostNameDisplayOverride
 					});
+	}
+	else if( request.query == "saveVisibilityOverride" )
+	{
+		visibilityItemName = request.hostName + "_visibilityOverride";
+
+		localStorage[ visibilityItemName ] = request.visibilityOverride;
+	}
+	else if( request.query == "removeVisibilityOverride" )
+	{
+		visibilityItemName = request.hostName + "_visibilityOverride";
+		
+		if( localStorage[ visibilityItemName ] )
+			localStorage.removeItem( visibilityItemName );
+	}
+	else if( request.query == "saveDisplayOverride" )
+	{
+		displayItemName = request.hostName + "_displayOverride";
+		
+		localStorage[ displayItemName ] = request.displayOverride;
+	}
+	else if( request.query == "removeDisplayOverride" )
+	{
+		displayItemName = request.hostName + "_displayOverride";
+		
+		if( localStorage[ displayItemName ] )
+			localStorage.removeItem( displayItemName );
+	}
+	else if( request.query == "checkIncognito" )
+	{
+		sendResponse( { incognito: sender.tab.incognito } );
+	}
 	else
 		sendResponse({});
 });
@@ -29,6 +75,6 @@ chrome.tabs.onUpdated.addListener( function( tabID, changeInfo, tab )
 
 chrome.browserAction.onClicked.addListener( function( tab )
 {
-	chrome.tabs.executeScript( null, { code: "headingMarkers.toggleVisibility()" } );
+	chrome.tabs.sendRequest( tab.id, { tabEvent: "browserActionClicked" } );
 });
 </script>

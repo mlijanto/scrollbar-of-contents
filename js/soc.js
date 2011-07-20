@@ -4,6 +4,9 @@ $(document).ready(function() {
 	const WINDOW_SCROLL_DURATION = 800;
 	const MARKER_TRANSFORM_DURATION = 280;
 	const MIN_MARKER_Z_INDEX = 100001;
+	//const TOGGLE_VISIBILITY_HOVER_DISTANCE_FROM_SCROLLBAR = 280;
+	
+	var hostName = location.hostname;
 	
 	var docHeight = $(document).height();
 	
@@ -15,55 +18,78 @@ $(document).ready(function() {
 	var markerBackgroundColor = "rgba( 28, 28, 28, 0.88 )";
 	var markerOverBackgroundColor = "-webkit-linear-gradient( top, #fafafa, #d1d1d1 )";
 	
-	var newPageLoad = true;
+	var markersCreated = false;	
 	
 	// user customizable variables
-	var defaultDisplay, socMarkerVisibility, socMarkerDisplay, textLength, maxHeadingHierarchy, preventOverlap;
+	var defaultDisplay, socMarkerDefaultVisibility, socMarkerDefaultDisplay, socMarkerVisibility, socMarkerDisplay, hostNameDisplayOverride, hostNameVisibilityOverride, textLength, maxHeadingHierarchy, preventOverlap/*, toggleVisibityOnHover*/;
 	
-	/*------------------------------------------------
-	  Listen if tab is updated or if tab selection is 
-	  changed to keep tab data up to date and to make
-	  options page changes take effect immediately.
-	------------------------------------------------*/
+	init();
 	
-	chrome.extension.onRequest.addListener( function( request, sender, sendResponse )
+	function init()
 	{
-		if( request.tabEvent == "selectionChanged" )
+		retrieveOptions();
+		
+		/*------------------------------------------------
+		  Listen if tab is updated or if tab selection is 
+		  changed to keep tab data up to date and to make
+		  options page changes take effect immediately.
+		------------------------------------------------*/
+		
+		chrome.extension.onRequest.addListener( function( request, sender, sendResponse )
 		{
-			newPageLoad = false;
-			
-			retrieveOptions();
-			
-			sendResponse({});
-		}
-		else if( request.tabEvent == "updated" )
-		{
-			newPageLoad = false;
-			
-			init();
-			
-			sendResponse({});
-		}
-		else
-			// close request
-			sendResponse({});
-	});
+			if( request.tabEvent == "selectionChanged" )
+			{				
+				retrieveOptions();
+				
+				sendResponse({});
+			}
+			else if( request.tabEvent == "updated" )
+			{				
+				// update markers if markers have been created
+				if( markersCreated == true )
+					createHeadingMarkers();
+				
+				sendResponse({});
+			}
+			else if( request.tabEvent == "browserActionClicked" )
+			{
+				toggleMarkerVisibilityHandler();
+				
+				sendResponse({});
+			}
+			else
+				// close request
+				sendResponse({});
+		});
+		
+		
+		/*------------------------------------------------
+		  Create keyboard shortcuts.
+		------------------------------------------------*/
+		
+		document.addEventListener( "keydown", keyDownHandler, false );
+	}
+	
 	
 	/*------------------------------------------------
-	  Retrieve user preferences from local storage
-	  then initialize heading markers
+	  retrieveOptions()
+	  
+	  Retrieves user preferences or overrides 
+	  from local storage then initializes 
+	  heading markers
 	------------------------------------------------*/
-	
-	retrieveOptions();
 	
 	function retrieveOptions()
 	{
-		chrome.extension.sendRequest( { displayValue: "displayOption", textLengthValue: "textLengthOption", levelValue: "levelOption", overlapValue: "overlapOption" },
+		chrome.extension.sendRequest( { query: "getUserOptions", hostName: hostName },
 			function( response )
 			{
 				defaultDisplay = response.displayOption;
 				textLength = response.textLengthOption;
 				maxHeadingHierarchy = response.levelOption;
+				hostNameVisibilityOverride = response.hostNameVisibilityOverride;
+				hostNameDisplayOverride = response.hostNameDisplayOverride;
+				
 				
 				if( !defaultDisplay )
 					defaultDisplay = "hidden";
@@ -79,33 +105,284 @@ $(document).ready(function() {
 				else if( response.overlapOption == "false" )
 					preventOverlap = false;
 				else
-					preventOverlap = true;		
+					preventOverlap = true;
+				
+				/*if( response.toggleVisibityOnHoverOption == "true" )
+					toggleVisibityOnHover = true;
+				else if( response.toggleVisibityOnHoverOption == "false" )
+					toggleVisibityOnHover = false;
+				else
+					toggleVisibityOnHover = false;*/
+				
+				
+				/*------------------------------------------------
+				  Set default and initial markers visibility 
+				  and display.
+				------------------------------------------------*/
 				
 				switch( defaultDisplay )
 				{
 					case "maximized":
-						socMarkerVisibility = "visible";
-						socMarkerDisplay = "maximized";
+						socMarkerDefaultVisibility = socMarkerVisibility = "visible";
+						socMarkerDefaultDisplay = socMarkerDisplay = "maximized";						
 						break;
 					
 					case "minimized":
-						socMarkerVisibility = "visible";
-						socMarkerDisplay = "minimized";
+						socMarkerDefaultVisibility = socMarkerVisibility = "visible";
+						socMarkerDefaultDisplay = socMarkerDisplay = "minimized";						
 						break;
 					
 					case "hidden":
-						socMarkerVisibility = "hidden";
-						socMarkerDisplay = "maximized";
+						socMarkerDefaultVisibility = socMarkerVisibility = "hidden";
+						socMarkerDefaultDisplay = socMarkerDisplay = "maximized";
 						break;
 				}
+					
 				
-				init();
+				/*------------------------------------------------
+				  If there are overrides for current hostname,
+				  set initial visibility and display style, 
+				  then create markers.
+				------------------------------------------------*/
+				
+				if( hostNameVisibilityOverride || hostNameDisplayOverride )
+				{
+					if( hostNameVisibilityOverride )
+						socMarkerVisibility = hostNameVisibilityOverride;
+					
+					if( hostNameDisplayOverride )
+						socMarkerDisplay = hostNameDisplayOverride;
+					
+					createHeadingMarkers();
+				}
+				else
+				{
+					/*------------------------------------------------
+					  If markers have not been created, create them 
+					  except when the default is hidden.
+					  
+					  If markers have been created, always recreate 
+					  them (in case the user changes the default 
+					  to hidden from the options page in the middle 
+					  of viewing a page).
+					------------------------------------------------*/
+					
+					if( markersCreated == false )
+					{
+						if( defaultDisplay != "hidden" )					
+							createHeadingMarkers();
+					}
+					else
+						createHeadingMarkers();
+				}
 			}
 		);
 	}
 	
-	function init()
+	function keyDownHandler( e )
 	{
+	
+		// shift-alt-m
+		if( e.keyCode == 77 )
+		{
+			if( e.shiftKey && e.altKey )
+			{
+				e.preventDefault();
+				
+				toggleMarkerDisplayHandler();
+			}
+		}
+		// shift-alt-n
+		else if( e.keyCode == 78 )
+		{
+			if( e.shiftKey && e.altKey )
+			{
+				e.preventDefault();
+				
+				toggleMarkerVisibilityHandler();
+			}
+		}
+	}
+	
+	
+	/*------------------------------------------------
+	  toggleMarkerVisibilityHandler()
+	  
+	  Checks if markers are already created, create 
+	  markers if not. Checks whether overrides should 
+	  be saved for this hostname.
+	------------------------------------------------*/
+	
+	function toggleMarkerVisibilityHandler( saveOverride )
+	{
+		// create markes if they are not created yet
+		if( markersCreated == false )
+			createHeadingMarkers();
+		
+		// save an override for this hostname?
+		if( !saveOverride )
+			saveOverride = true;
+		
+		// check incognito before saving override, otherwise toggle visibility
+		if( saveOverride == true )
+			checkIncognito( "visibility" );
+		else
+			toggleMarkerVisibility( saveOverride );
+	}
+	
+	function toggleMarkerVisibility( saveOverride )
+	{
+		if( socMarkerVisibility == "hidden" )
+		{
+			$(".soc_marker").css( { "display": "block", "opacity": "0" } );
+			$(".soc_marker").animate( { "opacity": "1" }, MARKER_TRANSFORM_DURATION );
+			
+			socMarkerVisibility = "visible";
+			
+			if( saveOverride )
+				updateVisibilityOverride();
+		}
+		else if( socMarkerVisibility == "visible" )
+		{
+			$(".soc_marker").animate( { "opacity": "0" }, MARKER_TRANSFORM_DURATION, function()
+			{
+				$(".soc_marker").css( { "display": "none" } );
+				
+				socMarkerVisibility = "hidden";
+				
+				if( saveOverride )
+					updateVisibilityOverride();
+			});
+		}
+	}
+	
+	
+	/*------------------------------------------------
+	  toggleMarkerDisplayHandler()
+	  
+	  Checks if markers are already created, create 
+	  markers if not. Checks whether overrides should 
+	  be saved for this hostname.
+	------------------------------------------------*/
+	
+	function toggleMarkerDisplayHandler( saveOverride )
+	{
+		// create markes if they are not created yet
+		if( markersCreated == false )
+			createHeadingMarkers();
+		
+		// save an override for this hostname?
+		if( !saveOverride )
+			saveOverride = true;
+		
+		// check incognito before saving override, otherwise toggle display
+		if( saveOverride == true )
+			checkIncognito( "display" );
+		else
+			toggleMarkerDisplay( saveOverride );
+	}
+	
+	function toggleMarkerDisplay( saveOverride )
+	{
+		if( socMarkerDisplay == "maximized" )
+		{
+			$(".soc_marker_span").css( { "display": "none" } );
+			
+			socMarkerDisplay = "minimized";
+			
+			if( saveOverride )
+				updateDisplayOverride();
+		}
+		else if( socMarkerDisplay == "minimized" )
+		{	
+			$(".soc_marker_span").css( { "display": "inline" } );
+			
+			socMarkerDisplay = "maximized";
+			
+			if( saveOverride )
+				updateDisplayOverride();
+		}
+	}
+	
+	
+	/*------------------------------------------------
+	  checkIncognito()
+	  
+	  Checks if current tab is in incognito mode to 
+	  determine whether overrides are allowed to 
+	  be saved.
+	  Toggles visibility or display after checking.
+	------------------------------------------------*/
+	
+	function checkIncognito( toggleType )
+	{
+		var allowOverride;
+		
+		chrome.extension.sendRequest( { query: "checkIncognito" }, function( response )
+		{
+			if( response.incognito == true )
+				allowOverride = false;
+			else
+				allowOverride = true;
+			
+			console.log( allowOverride );			
+			
+			switch( toggleType )
+			{
+				case "visibility":
+				toggleMarkerVisibility( allowOverride );
+				break;
+				
+				case "display":
+				toggleMarkerDisplay( allowOverride );
+				break;
+			}
+		});		
+	}
+	
+	
+	/*------------------------------------------------
+	  updateVisibilityOverride()
+	  
+	  Saves or removes visibility override for 
+	  current hostname
+	------------------------------------------------*/
+	
+	function updateVisibilityOverride()
+	{
+		if( socMarkerVisibility != socMarkerDefaultVisibility )
+		{
+			chrome.extension.sendRequest( { query: "saveVisibilityOverride", visibilityOverride: socMarkerVisibility, hostName: hostName } );
+		}
+		else
+		{
+			chrome.extension.sendRequest( { query: "removeVisibilityOverride", hostName: hostName } );
+		}
+	}
+	
+	
+	/*------------------------------------------------
+	  updateDisplayOverride()
+	  
+	  Saves or removes display override for 
+	  current hostname
+	------------------------------------------------*/
+	
+	function updateDisplayOverride()
+	{
+		if( socMarkerDisplay != socMarkerDefaultDisplay )
+		{
+			chrome.extension.sendRequest( { query: "saveDisplayOverride", displayOverride: socMarkerDisplay, hostName: hostName } );
+		}
+		else
+		{
+			chrome.extension.sendRequest( { query: "removeDisplayOverride", hostName: hostName } );
+		}
+	}
+	
+	function createHeadingMarkers()
+	{
+		
 		/*------------------------------------------------
 		  Delete existing heading markers if they are
 		  already created then instantiate new objects.
@@ -142,25 +419,30 @@ $(document).ready(function() {
 		
 		
 		/*------------------------------------------------
-		  Create keyboard shortcuts.
-		------------------------------------------------*/
-		
-		if( newPageLoad )
-			document.addEventListener( "keydown", headingMarkers.keyDownHandler, false );
-		
-		
-		/*------------------------------------------------
 		  Set initial markers position and reposition 
 		  them if window is resized or document 
 		  height changes.
 		------------------------------------------------*/
 		
 		headingMarkers.setPosition();
-		if( newPageLoad )
+		if( markersCreated == false )
 		{
 			window.onresize = function() { headingMarkers.setPosition() };
-			window.setInterval( checkDocumentHeight, 100 );
+			window.setInterval( intervalTickHandler, 100 );
 		}
+		
+		
+		/*------------------------------------------------
+		  Add mousemove event listener if toggle 
+		  visibility on hover is activated.
+		------------------------------------------------*/
+		
+		/*if( toggleVisibityOnHover == true )
+		{
+			// unbind first to prevent multiple bindings
+			$(document).unbind( "mousemove", documentMouseMoveHandler );
+			$(document).bind( "mousemove", documentMouseMoveHandler );
+		}*/
 		
 		
 		/*------------------------------------------------
@@ -169,18 +451,56 @@ $(document).ready(function() {
 		
 		if( socMarkerVisibility == "visible" )
 		{
-			if( newPageLoad )
+			if( markersCreated == false )
 			{
 				$(".soc_marker").css( { "display": "block", "opacity": "0" } );
-				$(".soc_marker").animate( { "opacity": "1" }, MARKER_TRANSFORM_DURATION );
+				$(".soc_marker").animate( { "opacity": "1" }, MARKER_TRANSFORM_DURATION );				
 			}
 			else
 				$(".soc_marker").css( { "display": "block", "opacity": "1" } );
 		}
+		
+		if( markersCreated == false )
+			markersCreated = true;
 	}
 	
-	function checkDocumentHeight()
-	{		
+	/*function documentMouseMoveHandler( e )
+	{*/
+		/*------------------------------------------------
+		  Show/hide markers when cursor hovers near 
+		  scrollbar if user chooses to do so.
+		------------------------------------------------*/
+		
+		/*if( toggleVisibityOnHover == true )
+		{
+			// get current browser viewport width
+			var browserWidth = $(window).width();
+			var toggleVisibilityHoverBoundary = browserWidth - TOGGLE_VISIBILITY_HOVER_DISTANCE_FROM_SCROLLBAR;
+			var cursorX = e.pageX;
+			
+			if( cursorX > toggleVisibilityHoverBoundary )
+			{
+				// show markers when cursor moves close to scrollbar
+				if( socMarkerVisibility = "hidden" )
+					toggleMarkerVisibilityHandler( false );
+			}
+			else
+			{
+				// hide markers when cursor moves away from scrollbar, don't hide if an override exists
+				if( socMarkerVisibility = "visible" && !hostNameVisibilityOverride )
+					toggleMarkerVisibilityHandler( false );
+			}
+		}
+	}*/
+	
+	function intervalTickHandler()
+	{
+		/*------------------------------------------------
+		  Check document height and update markers
+		  positions if it changes.
+		------------------------------------------------*/
+		
+		// get current html document height
 		var currentDocHeight = $(document).height();
 		
 		if( docHeight != currentDocHeight )
@@ -188,6 +508,36 @@ $(document).ready(function() {
 			docHeight = currentDocHeight;
 			headingMarkers.setPosition()
 		}
+	}
+	
+	
+	/*------------------------------------------------
+	  createArrow()
+	  
+	  creates a new canvas element, draws an arrow 
+	  pointer, and returns it.
+	------------------------------------------------*/
+	
+	function createArrow()
+	{
+	    var arrowCanvas = document.createElement( "canvas" );
+	    arrowCanvas.setAttribute( "width", "6px" );
+	    arrowCanvas.setAttribute( "height", "10px" );
+	    arrowCanvas.setAttribute( "class", "soc_marker_arrow" );
+	
+	    if( typeof( G_vmlCanvasManager ) != "undefined" ) arrowCanvas = G_vmlCanvasManager.initElement( arrowCanvas );
+	    var arrowCtx = arrowCanvas.getContext( "2d" );
+	
+	    arrowCtx.beginPath();
+	    arrowCtx.moveTo( 5, 4 );
+	    arrowCtx.lineTo( 0, 0 );
+	    arrowCtx.lineTo( 0, 10 );
+	    arrowCtx.lineTo( 5, 6 );
+	    arrowCtx.quadraticCurveTo( 6, 5, 5, 4 );
+	    arrowCtx.fillStyle = markerBackgroundColor;
+	    arrowCtx.fill();
+	
+	    return arrowCanvas;
 	}
 	
 	function HeadingMarkers()
@@ -428,95 +778,5 @@ $(document).ready(function() {
 				offset: 0
 			});
 		}
-		
-		this.keyDownHandler = function ( e )
-		{
-			// shift-alt-m
-			if( e.keyCode == 77 )
-			{
-				if( e.shiftKey && e.altKey )
-				{
-					e.preventDefault();
-					
-					headingMarkers.toggleDisplay();
-				}
-			}
-			// shift-alt-n
-			else if( e.keyCode == 78 )
-			{
-				if( e.shiftKey && e.altKey )
-				{
-					e.preventDefault();
-					
-					headingMarkers.toggleVisibility();
-				}
-			}
-		}
-		
-		this.toggleVisibility = function()
-		{
-			if( socMarkerVisibility == "hidden" )
-			{
-				$(".soc_marker").css( { "display": "block", "opacity": "0" } );
-				$(".soc_marker").animate( { "opacity": "1" }, MARKER_TRANSFORM_DURATION );
-				
-				socMarkerVisibility = "visible";
-			}
-			else if( socMarkerVisibility == "visible" )
-			{
-				$(".soc_marker").animate( { "opacity": "0" }, MARKER_TRANSFORM_DURATION, function()
-				{
-					$(".soc_marker").css( { "display": "none" } );
-					
-					socMarkerVisibility = "hidden";
-				});
-			}
-		}
-		
-		this.toggleDisplay = function()
-		{
-			if( socMarkerDisplay == "maximized" )
-			{
-				$(".soc_marker_span").css( { "display": "none" } );
-				
-				socMarkerDisplay = "minimized";
-			}
-			else if( socMarkerDisplay == "minimized" )
-			{	
-				$(".soc_marker_span").css( { "display": "inline" } );
-				
-				socMarkerDisplay = "maximized";
-			}
-		}
-	}
-	
-	
-	/*------------------------------------------------
-	  createArrow()
-	  
-	  creates a new canvas element, draws an arrow 
-	  pointer, and returns it.
-	------------------------------------------------*/
-	
-	function createArrow()
-	{
-	    var arrowCanvas = document.createElement( "canvas" );
-	    arrowCanvas.setAttribute( "width", "6px" );
-	    arrowCanvas.setAttribute( "height", "10px" );
-	    arrowCanvas.setAttribute( "class", "soc_marker_arrow" );
-	
-	    if( typeof( G_vmlCanvasManager ) != "undefined" ) arrowCanvas = G_vmlCanvasManager.initElement( arrowCanvas );
-	    var arrowCtx = arrowCanvas.getContext( "2d" );
-	
-	    arrowCtx.beginPath();
-	    arrowCtx.moveTo( 5, 4 );
-	    arrowCtx.lineTo( 0, 0 );
-	    arrowCtx.lineTo( 0, 10 );
-	    arrowCtx.lineTo( 5, 6 );
-	    arrowCtx.quadraticCurveTo( 6, 5, 5, 4 );
-	    arrowCtx.fillStyle = markerBackgroundColor;
-	    arrowCtx.fill();
-	
-	    return arrowCanvas;
 	}
 });
