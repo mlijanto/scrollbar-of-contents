@@ -1,156 +1,194 @@
 body {
+    color: #484848;
     background: -webkit-radial-gradient( center 0px, circle farthest-corner, #f1f1f1 48%, #d8d8d8 100% );
 }
 
-#container {
+.mdl-grid {
+    width: 480px;
+    height: 100%;
+    padding: 0; 
+}
+
+.options {
     position: relative;
-    width: 380px;
-    margin: 80px auto;
-    padding: 36px 40px 48px;
-    text-align: center;
-    color: #484848;
-    text-shadow: 0px 1px 0px #fff;
-    font-family: arial, sans-serif;
-    font-size: 13px;
-    background: #f6f6f6;
-    border-radius: 13px;
-    box-shadow: 0px -2px 2px #fff, 0px 2px 2px #aaa;
+    width: 100%;
+    padding: 28px 0 58px;
+    border-radius: 8px;
+    /*box-shadow: 0px -2px 2px rgba(255, 255, 255, 0.8),
+        0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+        0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+        0px 1px 10px 0px rgba(0, 0, 0, 0.12);*/
+        
+    box-shadow: 0px -2px 2px rgba(255, 255, 255, 0.8),
+        0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+        0px 5px 8px 0px rgba(0, 0, 0, 0.14),
+        0px 1px 14px 0px rgba(0, 0, 0, 0.12);
 }
 
-h1 {
+.options_header {
+    font-size: 24px;
     color: #686868;
-    font-size: 23px;
-    letter-spacing: -1px;
-    text-shadow: 0px 1px 0px #fff;
 }
 
-h1 span {
-    margin: 0px 0px 0px 2px;
+.options_header span {
+    margin-left: 2px;
     color: #aaa;
 }
 
-form {
-    width: 328px;
-    margin: 48px 0px 0px 36px;
-    text-align: left;
+.options_form {
+    margin: 48px 0 0 0;
+}
+
+label,
+select,
+.form_advanced-button,
+.form_advanced_opacity,
+.mdl-checkbox,
+.form_reset {
+    margin-left: 68px;
 }
 
 select {
     width: 280px;
-    height: 23px;
+    height: 28px;
+    margin-top: 6px;
+    margin-bottom: 28px;
     color: #484848;
-    margin: 8px 0px 28px;
-    background: -webkit-linear-gradient( top, #fff, #fff );
     border: 1px solid #b1b1b1;
     cursor: pointer;
 }
 
-input[ type = checkbox ] {
-    margin: 10px 0px 8px 2px;
+a.mdl-button,
+button.mdl-button {
+    color: #484848;
+    text-transform: none;
 }
 
-button {
-    width: 140px;
-    height: 40px;
-    margin: 28px 15px 0px -1px;
-    padding: 8px 13px 9px;
+.form_advanced-button {
     color: #484848;
-    text-shadow: 0px 1px 0px #fff;
-    background: -webkit-linear-gradient( top, #f1f1f1, #d1d1d1 );
-    border-radius: 8px;
-    border: none;
-    box-shadow: 0px -1px 1px #fff, 0px 1px 1px #aaa;
     cursor: pointer;
 }
 
-button:hover {
-    background: -webkit-linear-gradient( top, #d8d8d8, #b1b1b1 );
-    box-shadow: 0px -1px 1px #fff, 0px 1px 1px #888;
+.form_advanced-arrow {
+    margin: -2px 0 0 3px;
+    transition: transform 0.48s ease-out;
 }
 
-#info_level_container {
-    position: absolute;
-    top: 300px;
-    left: 364px;
+.form_advanced {
+    position: relative;
+    height: 0;
+    margin: 10px 0 18px;
+    background: linear-gradient(to bottom,  #d8d8d8 0%,#e8e8e8 1%,#e8e8e8 99%,#f1f1f1 100%);
+    transition: height .48s ease-out;
+    overflow: hidden;
 }
 
-#info_level_icon {
+.form_advanced_opacity-label {
+    display: block;
+    margin-top: 28px;
+}
+
+.form_advanced_opacity {
+    margin-top: 6px;
+    margin-bottom: 28px;
+}
+
+.form_advanced_opacity_label {
+    display: inline-block;
+    color: #888;
+    transform: translateY(-2px);
+}
+
+.mdl-slider__container {
+    display: inline-flex;
+    width: 150px;
+}
+
+.mdl-slider {
+    width: calc(100% - 8px);
+    margin: 0 4px;
+}
+
+.mdl-slider__background-flex {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+}
+
+.mdl-checkbox {
+    margin-top: 8px;
+}
+
+.mdl-checkbox__label {
+    font-size: 14px;
+}
+
+.form_advanced_info-level {
+    position: relative;
     width: 20px;
     height: 20px;
-    background: url( "../images/icon_info.png" ) no-repeat;
+    margin-left: 4px;
     cursor: pointer;
 }
 
-#info_level_icon:hover {
+.form_advanced_info-level::before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 0;
+    left: 0;
+    background: url( "../images/icon_info.png" ) no-repeat;
+}
+
+.form_advanced_info-level:hover::before {
     background: url( "../images/icon_info_hover.png" ) no-repeat;
 }
 
-#info_container {
+.tooltip-level {
     opacity: 0;
     position: absolute;
     width: 196px;
     margin: 0px;
-    top: -24px;
-    left: 28px;
+    top: 460px;
+    left: 380px;
     padding: 8px 13px;
     text-align: left;
     color: #f1f1f1;
     font-family: arial, sans-serif;
     font-size: 12px;
-    line-height: 1.5em;
+    line-height: 1.4em;
     text-shadow: none;
     background: rgba( 48, 48, 48, 0.8 );
-    -webkit-border-radius: 8px;
-    -webkit-box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
+    border-radius: 4px;
+    box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
     cursor: default;
-    
-    -webkit-transition-property: opacity;
-    -webkit-transition-duration: 0.28s;
+    transition: opacity 0.28s;
+    z-index: 10;
 }
 
-#info_arrow {
+.tooltip-level_arrow {
     position: absolute;
     bottom: 29px;
     left: -8px;
 }
 
-#notification {
-    display: none;
-    opacity: 0;
-    position: absolute;
-    margin: 0px;
-    top: 140px;
-    left: 140px;
-    padding: 28px 28px;
-    text-align: left;
-    color: #f1f1f1;
-    font-family: arial, sans-serif;
-    font-size: 13px;
-    line-height: 1.5em;
-    text-shadow: none;
-    background: rgba( 48, 48, 48, 0.8 );
-    -webkit-border-radius: 8px;
-    -webkit-box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
-}
-
-#info_keyboard_shortcut_container {
-    width: 313px;
-    margin: 42px 0px 8px -2px;
-    padding: 13px 0px 0px 2px;
+.form_keyboard {
+    width: calc( 100% - 132px );
+    margin: 48px 64px 0;
+    padding: 40px 0 0 4px;
     color: #888;
     border-top: 1px solid #d8d8d8;
 }
 
-#info_keyboard_shortcut_container ul {
-    margin: 0px;
-    padding: 0px 0px 0px 20px;
+.form_keyboard p {
+    margin: 0 0 6px;
 }
 
-#info_keyboard_shortcut_container li {
-    margin: 0px 0px 8px;
-    padding: 0px;
+.form_keyboard ul {
+    margin: 0;
+    padding: 0 0 0 18px;
 }
 
-#info_keyboard_shortcut_container li span {
-    margin: 0px 2px;
+.form_keyboard_container li span {
+    margin: 0 2px;
 }

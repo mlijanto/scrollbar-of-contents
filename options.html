@@ -1,58 +1,94 @@
 <html>
 <head>
     <title>Scrollbar of Contents Options</title>
+    <link rel="stylesheet" type="text/css" href="css/external/material.min.css">
     <link rel="stylesheet" type="text/css" href="css/options.css">
 </head>
 <body>
-    <div id="container">
-        <h1>Scrollbar of Contents <span>Options</span></h1>
-        <form>
-            <label for="display">When a page loads,</label>
-            <br />
-            <select id="display">
-                <option id="display-maximized" value="maximized">show markers on scrollbar</option>
-                <option id="display-minimized" value="minimized">show minimized markers on scrollbar</option>
-                <option id="display-hidden" value="hidden">hide markers</option>
-            </select>
-            <br />
-            <label for="textLength">On each maximized marker,</label>
-            <br />
-            <select id="textLength">
-                <option id="textLength-entireText" value="entireText">show the entire heading text</option>
-                <option id="textLength-firstThreeWords" value="firstThreeWords">show the first three words</option>
-                <option id="textLength-firstTenCharacters" value="firstTenCharacters">show the first ten characters</option>
-            </select>
-            <br />
-            <label for="level">Levels of headings shown:</label>
-            <br />
-            <select id="level">
-                <option id="level-1" value="1">1</option>
-                <option id="level-2" value="2">2</option>
-                <option id="level-3" value="3">3 (recommended)</option>
-                <option id="level-4" value="4">4</option>
-                <option id="level-5" value="5">5</option>
-                <option id="level-6" value="6">6</option>
-            </select>   
-            <div id="info_level_container">
-                <div id="info_level_icon"></div>
-                <div id="info_container">
-                    There are six levels of headings in web pages, from 1 as the most important to 6 as the least important.
-                    <canvas id="info_arrow" width="8px" height="13px"></canvas>
+    <div class="mdl-layout mdl-js-layout">
+        <div class="mdl-layout__content">
+            <div class="mdl-grid">
+                <div class="options mdl-cell mdl-cell--4-col mdl-cell--middle">
+
+                    <h1 class="options_header mdl-typography--font-bold mdl-typography--text-center">
+                        Scrollbar of Contents
+                        <span>Options</span>
+                    </h1>
+
+                    <form class="options_form form mdl-typography--body-1">
+                        <label for="form_diplay">When a page loads,</label>
+                        <br>
+                        <select id="form_display" class="mdl-typography--body-1">
+                            <option id="display--maximized" value="maximized">show markers</option>
+                            <option id="display--minimized" value="minimized">show minimized markers</option>
+                            <option id="display--hidden" value="hidden">hide markers</option>
+                        </select>
+                        <br>
+
+                        <label for="form_text-length">On each maximized marker,</label>
+                        <br>
+                        <select id="form_text-length" class="mdl-typography--body-1">
+                            <option id="textLength--entireText" value="entireText">show the entire heading text</option>
+                            <option id="textLength--firstThreeWords" value="firstThreeWords">show the first three words</option>
+                            <option id="textLength--firstTenCharacters" value="firstTenCharacters">show the first ten characters</option>
+                        </select>
+                        <br>
+
+                        <a id="form_advanced-button" class="form_advanced-button">
+                            Advanced options
+                            <canvas id="form_advanced-arrow" class="form_advanced-arrow" width="11px" height="11px"></canvas>
+                        </a>
+
+                        <div id="form_advanced" class="form_advanced">
+                            <label for="form_advanced_opacity" class="form_advanced_opacity-label">Markers opacity:</label>
+                            <div class="form_advanced_opacity">
+                                <span class="form_advanced_opacity_label">transparent</span>
+                                <input id="form_advanced_opacity_input" class="mdl-slider mdl-js-slider" type="range" min="0" max="100" tabindex="0">
+                                <span class="form_advanced_opacity_label">opaque</span>
+                            </div>
+
+                            <label for="form_advanced_level">Levels of headings shown:</label>
+                            <br>
+                            <select id="form_advanced_level" class="mdl-typography--body-1">
+                                <option id="level--1" value="1">1</option>
+                                <option id="level--2" value="2">2</option>
+                                <option id="level--3" value="3">3 (recommended)</option>
+                                <option id="level--4" value="4">4</option>
+                                <option id="level--5" value="5">5</option>
+                                <option id="level--6" value="6">6</option>
+                            </select>
+
+                            <span id="form_advanced_info-level" class="form_advanced_info-level">
+                            </span>
+
+                            <label class="form_advanced_overlap mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="form_advanced_overlap_input">
+                                <input type="checkbox" id="form_advanced_overlap_input" class="mdl-checkbox__input">
+                                <span class="mdl-checkbox__label">Prevent overlapping markers when possible</span>
+                            </label>
+                        </div>
+
+                        <button id="form_reset" class="form_reset mdl-button mdl-js-button mdl-button--raised mdl-typography--text-capitalize">
+                            Reset options
+                        </button>
+
+                        <div class="form_keyboard">
+                            <p>Keyboard shortcuts:</p>
+                            <ul>
+                                <li>Minimize<span>/</span>maximize markers ( Shift-Alt-M )</li>
+                                <li>Show<span>/</span>hide markers ( Shift-Alt-N )</li>
+                            </ul>
+                        </div>
+
+                        <div id="tooltip-level" class="form_tooltip-info tooltip-level">
+                            There are six levels of headings on webpages, from 1 as the most important to 6 as the least important.
+                            <canvas id="tooltip-level_arrow" class="tooltip-level_arrow" width="8px" height="13px"></canvas>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <br />
-            <input id="overlap" type="checkbox"> Prevent overlapping markers when possible</input>
-            <br />
-            <button id="reset">Reset options</button>
-            <div id="info_keyboard_shortcut_container">
-                <p>Keyboard shortcuts:</p>
-                <ul>
-                    <li>Minimize<span>/</span>maximize markers ( Shift-Alt-M )</li>
-                    <li>Show<span>/</span>hide markers ( Shift-Alt-N )</li>
-                </ul>
-            </div>
-        </form>
+        </div>
     </div>
+    <script defer src="js/external/material.min.js"></script>
     <script src="js/options.js"></script>
 </body>
 </html>

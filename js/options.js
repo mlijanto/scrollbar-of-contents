@@ -1,39 +1,48 @@
 (function () {
-    var display = document.getElementById( "display" );
-    var textLength = document.getElementById( "textLength" );
-    var level = document.getElementById( "level" );
-    var overlap = document.getElementById( "overlap" );
-    var reset = document.getElementById( "reset" );
+    var display = document.getElementById("form_display");
+    var textLength = document.getElementById("form_text-length");
+    var opacity = document.getElementById("form_advanced_opacity_input");
+    var level = document.getElementById("form_advanced_level");
+    var overlap = document.getElementById("form_advanced_overlap_input")
+    var reset = document.getElementById("form_reset");
+    var advancedOptionsExpanded = false;
 
     var displayValue;
     var textLengthValue;
+    var opacityValue;
     var levelValue;
     var overlapValue;
-    
+
     var initOptionsPage = function () {
         restoreOptions();
-        drawInfoArrow();
+        drawAdvancedButtonArrow();
 
-        var levelInfoIcon = document.getElementById( "info_level_icon" );
-        levelInfoIcon.addEventListener( "mouseover", onLevelInfoIconOver );
-        levelInfoIcon.addEventListener( "mouseout", onLevelInfoIconOut );
-        
-        display.addEventListener( "change", saveOptions, false );
-        textLength.addEventListener( "change", saveOptions, false );
-        level.addEventListener( "change", saveOptions, false );
-        overlap.addEventListener( "change", saveOptions, false );
-        reset.addEventListener( "click", resetOptions, false );
+        var advancedButton = document.getElementById("form_advanced-button");
+        advancedButton.addEventListener("click", onAdvancedButtonClick, false);
+
+        var infoLevel = document.getElementById("form_advanced_info-level");
+        infoLevel.addEventListener("mouseover", onInfoLevelOver);
+        infoLevel.addEventListener("mouseout", onInfoLevelOut);
+
+        display.addEventListener("change", saveOptions, false);
+        textLength.addEventListener("change", saveOptions, false);
+        opacity.addEventListener("change", saveOptions, false);
+        document.getElementById("form_advanced_overlap_input").addEventListener("change", saveOptions, false);
+        level.addEventListener("change", saveOptions, false);
+        reset.addEventListener("click", resetOptions, false);
     }
 
     var saveOptions = function () {
-        displayValue = display.children[ display.selectedIndex ].value;
-        textLengthValue = textLength.children[ textLength.selectedIndex ].value;
-        levelValue = level.children[ level.selectedIndex ].value;
+        displayValue = display.children[display.selectedIndex].value;
+        textLengthValue = textLength.children[textLength.selectedIndex].value;
+        opacityValue = opacity.value / 100;
+        levelValue = level.children[level.selectedIndex].value;
         overlapValue = overlap.checked;
-        
+
         chrome.storage.sync.set({
             displayOption: displayValue,
             textLengthOption: textLengthValue,
+            opacityOption: opacityValue,
             levelOption: levelValue,
             overlapOption: overlapValue
         });
@@ -43,23 +52,27 @@
         chrome.storage.sync.get({
             // Get stored values and set default values 
             displayOption: "hidden",
-            textLengthOption: "entireText",
+            textLengthOption: "firstThreeWords",
+            opacityOption: .91,
             levelOption: 3,
-            overlapOption: "true"
-        }, function ( options ) {
+            overlapOption: true
+        }, function (options) {
             displayValue = options.displayOption;
             textLengthValue = options.textLengthOption;
+            opacityValue = options.opacityOption * 100;
             levelValue = options.levelOption;
             overlapValue = options.overlapOption;
-            
-            document.getElementById( "display-" + displayValue ).selected = true;
-            document.getElementById( "textLength-" + textLengthValue ).selected = true;
-            document.getElementById( "level-" + levelValue ).selected = true;
 
-            if (overlapValue === "false") {
-                overlap.checked = false;
+            document.getElementById("display--" + displayValue).selected = true;
+            document.getElementById("textLength--" + textLengthValue).selected = true;
+            document.getElementById("level--" + levelValue).selected = true;
+
+            opacity.MaterialSlider.change(opacityValue);
+
+            if (overlapValue === false) {
+                document.querySelector(".form_advanced_overlap").MaterialCheckbox.uncheck();
             } else {
-                overlap.checked = true;
+                document.querySelector(".form_advanced_overlap").MaterialCheckbox.check();
             }
         });
     }
@@ -67,35 +80,53 @@
     function resetOptions() {
         chrome.storage.sync.set({
             displayOption: "hidden",
-            textLengthOption: "entireText",
+            textLengthOption: "firstThreeWords",
+            opacityOption: .91,
             levelOption: 3,
             overlapOption: true
         });
     }
 
-    function drawInfoArrow() {
-        var arrowCanvas = document.getElementById( "info_arrow" );
-        var arrowContext = arrowCanvas.getContext( "2d" );
+    function drawAdvancedButtonArrow() {
+        var arrowCanvas = document.getElementById("form_advanced-arrow");
+        var arrowContext = arrowCanvas.getContext("2d");
 
         arrowContext.beginPath();
-        arrowContext.moveTo( 1, 6 );
-        arrowContext.lineTo( 8, 0 );
-        arrowContext.lineTo( 8, 13 );
-        arrowContext.lineTo( 1, 8 );
-        arrowContext.quadraticCurveTo( 0, 7, 1, 6 );
-        arrowContext.fillStyle = "rgba( 48, 48, 48, 0.8 )";
+        arrowContext.moveTo(0, 1);
+        arrowContext.quadraticCurveTo(0, 0, 1, 0);
+        arrowContext.lineTo(10, 5);
+        arrowContext.quadraticCurveTo(11, 6, 10, 7);
+        arrowContext.lineTo(1, 11);
+        arrowContext.quadraticCurveTo(0, 11, 0, 10);
+        arrowContext.lineTo(0, 1);
+        arrowContext.fillStyle = "#c8c8c8";
         arrowContext.fill();
     }
 
-    function onLevelInfoIconOver() {
-        infoContainer = document.getElementById( "info_container" );
-        infoContainer.style.display = "block";
-        infoContainer.style.opacity = 1;
+    function onAdvancedButtonClick() {
+        var advancedOptions = document.getElementById("form_advanced");
+        var advancedArrow = document.getElementById("form_advanced-arrow");
+
+        if (advancedOptionsExpanded === true) {
+            advancedOptions.style.height = "0";
+            advancedArrow.style.transform = "rotate(0deg)";
+        } else {
+            advancedOptions.style.height = "264px";
+            advancedArrow.style.transform = "rotate(90deg)";
+        }
+
+        advancedOptionsExpanded = !advancedOptionsExpanded;
     }
 
-    function onLevelInfoIconOut() {
-        document.getElementById( "info_container" ).style.opacity = 0;
+    function onInfoLevelOver() {
+        infoTooltip = document.getElementById("tooltip-level");
+        infoTooltip.style.display = "block";
+        infoTooltip.style.opacity = 1;
     }
-    
-    window.addEventListener( "load", initOptionsPage, false );
+
+    function onInfoLevelOut() {
+        document.getElementById("tooltip-level").style.opacity = 0;
+    }
+
+    window.addEventListener("load", initOptionsPage, false);
 })();
