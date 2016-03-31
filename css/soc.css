@@ -1,3 +1,9 @@
+.soc_marker,
+.soc_marker * {
+    margin: 0;
+    padding: 0;
+}
+
 .soc_marker {
     position: fixed;
     width: auto;

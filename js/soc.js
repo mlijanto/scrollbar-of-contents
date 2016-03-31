@@ -1,4 +1,4 @@
-var soc = (function () {
+var soc = (function() {
     var scrollDuration = 800;
 
     var markerAnimationDuration = 280;
@@ -7,6 +7,7 @@ var soc = (function () {
 
     var hostName = location.hostname;
     var docHeight = $(document).height();
+    var isIncognito;
     var reservedYPositions = [];
     var reservedMarkerHeight = 28;
     var headings = {};
@@ -30,7 +31,7 @@ var soc = (function () {
         maxHeadingHierarchy,
         preventOverlap;
 
-    var retrieveOptions = function () {
+    var retrieveOptions = function() {
         // Set stored values' keys and default values
         storageKeysToGet = {
             "displayOption": "hidden",
@@ -43,7 +44,7 @@ var soc = (function () {
         storageKeysToGet[hostVisibilityOverrideKey] = "";
         storageKeysToGet[hostDisplayOverrideKey] = "";
 
-        chrome.storage.sync.get(storageKeysToGet, function (options) {
+        chrome.storage.sync.get(storageKeysToGet, function(options) {
             defaultDisplay = options.displayOption;
             socMarkerTextLength = options.textLengthOption;
             socMarkerOpacity = options.opacityOption;
@@ -100,7 +101,7 @@ var soc = (function () {
         });
     };
 
-    var toggleMarkerVisibility = function (setOverride) {
+    var toggleMarkerVisibility = function(setOverride) {
         if (markersCreated === false) {
             createHeadingMarkers();
         }
@@ -114,30 +115,30 @@ var soc = (function () {
         }
     };
 
-    var showMarkers = function (setOverride) {
+    var showMarkers = function(setOverride) {
         $(".soc_marker").css({ "display": "block", "opacity": 0 });
         $(".soc_marker").animate({ "opacity": socMarkerOpacity }, markerAnimationDuration);
 
         socMarkerVisibility = "visible";
 
-        if (setOverride && !checkIncognito()) {
+        if (setOverride && !isIncognito) {
             updateVisibilityOverride();
         }
     };
 
-    var hideMarkers = function (setOverride) {
-        $(".soc_marker").animate({ "opacity": 0 }, markerAnimationDuration, function () {
+    var hideMarkers = function(setOverride) {
+        $(".soc_marker").animate({ "opacity": 0 }, markerAnimationDuration, function() {
             $(".soc_marker").css({ "display": "none" });
         });
 
         socMarkerVisibility = "hidden";
 
-        if (setOverride && !checkIncognito()) {
+        if (setOverride && !isIncognito) {
             updateVisibilityOverride();
         }
     };
 
-    var toggleMarkerDisplay = function (setOverride) {
+    var toggleMarkerDisplay = function(setOverride) {
         if (markersCreated === false) {
             createHeadingMarkers();
         }
@@ -151,39 +152,31 @@ var soc = (function () {
         }
     };
 
-    var maximizeMarkers = function (setOverride) {
+    var maximizeMarkers = function(setOverride) {
         $(".soc_marker_text").css({ "display": "inline" });
 
         socMarkerDisplay = "maximized";
 
-        if (setOverride && !checkIncognito()) {
+        if (setOverride && !isIncognito) {
             updateDisplayOverride();
         }
     }
 
-    var minimizeMarkers = function (setOverride) {
+    var minimizeMarkers = function(setOverride) {
         $(".soc_marker_text").css({ "display": "none" });
 
         socMarkerDisplay = "minimized";
 
-        if (setOverride && !checkIncognito()) {
+        if (setOverride && !isIncognito) {
             updateDisplayOverride();
         }
     }
-
-    var checkIncognito = function () {
-        var isIncognito = chrome.runtime.sendMessage({ query: "checkIncognito" }, function (response) {
-            return response.incognito;
-        });
-
-        return isIncognito;
-    };
 
     /*------------------------------------------------
       Saves or removes visibility override for 
       current hostname
     ------------------------------------------------*/
-    var updateVisibilityOverride = function () {
+    var updateVisibilityOverride = function() {
         if (socMarkerVisibility !== socMarkerDefaultVisibility) {
             storageKeysToGet = {};
             storageKeysToGet[hostVisibilityOverrideKey] = socMarkerVisibility;
@@ -197,7 +190,7 @@ var soc = (function () {
       Saves or removes display override for 
       current hostname
     ------------------------------------------------*/
-    var updateDisplayOverride = function () {
+    var updateDisplayOverride = function() {
         if (socMarkerDisplay !== socMarkerDefaultDisplay) {
             storageKeysToGet = {};
             storageKeysToGet[hostDisplayOverrideKey] = socMarkerDisplay;
@@ -207,7 +200,7 @@ var soc = (function () {
         }
     }
 
-    var onKeyDown = function (e) {
+    var onKeyDown = function(e) {
         // shift-alt-m
         if (e.keyCode == 77) {
             if (e.shiftKey && e.altKey) {
@@ -216,7 +209,7 @@ var soc = (function () {
             }
         }
 
-            // shift-alt-n
+        // shift-alt-n
         else if (e.keyCode == 78) {
             if (e.shiftKey && e.altKey) {
                 e.preventDefault();
@@ -225,16 +218,14 @@ var soc = (function () {
         }
     };
 
-    var createHeadingMarkers = function () {
+    var createHeadingMarkers = function() {
         if (!$.isEmptyObject(headingMarkers)) {
             $(".soc_marker").remove();
             headings = {};
             headingMarkers = {};
         }
 
-        if (preventOverlap) {
-            reservedYPositions.length = 0;
-        }
+        if (preventOverlap) reservedYPositions.length = 0;
 
         headings = getHeadingsFromPage();
 
@@ -250,7 +241,7 @@ var soc = (function () {
 
         // If markers have not been created previously, attach listener
         if (markersCreated == false) {
-            window.onresize = function () { updateMarkerPositions() };
+            window.onresize = function() { updateMarkerPositions() };
             window.setInterval(onIntervalTick, 100);
         }
 
@@ -261,7 +252,7 @@ var soc = (function () {
             if (markersCreated === false) {
                 $(".soc_marker")
                     .css({ "display": "block", "opacity": 0 })
-                    .animate({ "opacity": "1" }, markerAnimationDuration);
+                    .animate({ "opacity": socMarkerOpacity }, markerAnimationDuration);
             } else {
                 $(".soc_marker").css({ "display": "block", "opacity": socMarkerOpacity });
             }
@@ -270,7 +261,7 @@ var soc = (function () {
         markersCreated = true;
     };
 
-    var getHeadingsFromPage = function () {
+    var getHeadingsFromPage = function() {
         var headingsTemp = [];
 
         for (var i = 0; i < maxHeadingHierarchy; i++) {
@@ -301,7 +292,7 @@ var soc = (function () {
       Finds an html element's position relative to 
       the document.
     ------------------------------------------------*/
-    var findPosition = function (headingElement) {
+    var findPosition = function(headingElement) {
         var topPos = leftPos = 0;
 
         do {
@@ -313,15 +304,17 @@ var soc = (function () {
         return { "topPos": topPos, "leftPos": leftPos };
     };
 
-    var updateMarkerPositions = function () {
+    var updateMarkerPositions = function() {
         var headingMarkersKeys = Object.keys(headingMarkers);
+        
+        if (preventOverlap) reservedYPositions.length = 0;
 
         for (var i = 0; i < headingMarkersKeys.length; i++) {
             headingMarkers[headingMarkersKeys[i]].setPosition();
         }
     };
 
-    var onIntervalTick = function () {
+    var onIntervalTick = function() {
         var currentDocHeight = $(document).height();
 
         if (docHeight !== currentDocHeight) {
@@ -330,9 +323,9 @@ var soc = (function () {
         }
     };
 
-    var HeadingMarker = function (headingElement, markerId) {
+    var HeadingMarker = function(headingElement, markerId) {
 
-        var createMarker = function () {
+        var createMarker = function() {
             var newMarker = document.createElement("div");
             newMarker.setAttribute("id", markerId);
             newMarker.setAttribute("class", "soc_marker");
@@ -352,7 +345,7 @@ var soc = (function () {
             return newMarker;
         }
 
-        var createArrow = function () {
+        var createArrow = function() {
             var arrowCanvas = document.createElement("canvas");
             arrowCanvas.setAttribute("width", "6px");
             arrowCanvas.setAttribute("height", "10px");
@@ -428,7 +421,7 @@ var soc = (function () {
         // $( "body" ).append( newMarker );
     };
 
-    HeadingMarker.prototype.onMouseEnter = function () {
+    HeadingMarker.prototype.onMouseEnter = function() {
         var markerId = this.getAttribute("id");
         var markerText = $(this).find(".soc_marker_text");
 
@@ -436,20 +429,15 @@ var soc = (function () {
 
         if (socMarkerDisplay === "minimized") markerText.css({ "display": "inline" });
 
-        // this.style.zIndex = markerZIndexMax;
-        // this.style.backgroundImage = markerHoverBackgroundColor;
-        // this.style.color = markerHoverColor;
-        // this.style.opacity = 1;
-        
         $(this).css({
             "z-index": markerZIndexMax,
             "opacity": 1
         });
-        
+
         $(this).addClass("soc_marker_hover");
     };
 
-    HeadingMarker.prototype.onMouseLeave = function () {
+    HeadingMarker.prototype.onMouseLeave = function() {
         var markerId = this.getAttribute("id");
         var markerText = $(this).find(".soc_marker_text");
 
@@ -457,29 +445,23 @@ var soc = (function () {
 
         if (socMarkerDisplay === "minimized") markerText.css({ "display": "none" });
 
-        // this.style.zIndex = headingMarkers[markerId].zIndex;
-        // this.style.backgroundImage = "none";
-        // this.style.backgroundColor = markerBackgroundColor;
-        // this.style.color = markerColor;
-        // this.style.opacity = socMarkerOpacity;
-        
         $(this).css({
             "z-index": headingMarkers[markerId].zIndex,
             "opacity": socMarkerOpacity
         });
-        
+
         $(this).removeClass("soc_marker_hover");
     };
 
-    HeadingMarker.prototype.onClick = function () {
+    HeadingMarker.prototype.onClick = function() {
         $.scrollTo(headingMarkers[this.getAttribute("id")].topPos,
-        {
-            duration: scrollDuration,
-            easing: "swing"
-        });
+            {
+                duration: scrollDuration,
+                easing: "swing"
+            });
     };
 
-    HeadingMarker.prototype.setPosition = function () {
+    HeadingMarker.prototype.setPosition = function() {
         var winToDocHeightRatio = $(window).height() / docHeight;
 
         /*------------------------------------------------
@@ -493,8 +475,6 @@ var soc = (function () {
         var markerTopPos = Number((winToDocHeightRatio * this.topPos).toFixed());
 
         if (preventOverlap === true) {
-            reservedYPositions.length = 0;
-            
             // Check if y position is reserved
             for (var i = 0; i < reservedYPositions.length; i++) {
                 if (markerTopPos === reservedYPositions[i]) {
@@ -518,15 +498,18 @@ var soc = (function () {
     };
 
     return {
-        init: function () {
-            retrieveOptions();
+        init: function() {
+            chrome.runtime.sendMessage({ query: "checkIncognito" }, function(response) {
+                isIncognito = response.incognito;
+                retrieveOptions();
+            });
 
             /*------------------------------------------------
               Listen for tab updates and tab selection changes
               to keep tab data up to date and to make
               options page changes take effect immediately.
             ------------------------------------------------*/
-            chrome.extension.onMessage.addListener(function (request, sender, sendResponse) {
+            chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
                 switch (request.tabEvent) {
                     case "selectionChanged":
                         retrieveOptions();
@@ -556,6 +539,6 @@ var soc = (function () {
     };
 })();
 
-$(function () {
+$(function() {
     soc.init();
 });
