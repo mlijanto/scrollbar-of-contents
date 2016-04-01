@@ -48,7 +48,7 @@
 }
 
 .soc-marker:hover::before {
-    border-left-color: #a8a8a8;
+    border-left-color: #919191;
 }
 
 .soc-marker:hover:active {

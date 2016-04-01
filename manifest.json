@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
     "name": "Scrollbar of Contents",
-    "version": "0.0.2",
-    "description": "Generates navigable heading markers on the scrollbar.",
+    "version": "0.2.0",
+    "description": "Creates clickable heading markers next to the scrollbar.",
     "icons": {
         "16": "images/icon_16.png",
         "48": "images/icon_48.png",
