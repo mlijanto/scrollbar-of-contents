@@ -116,8 +116,8 @@ var soc = (function() {
     };
 
     var showMarkers = function(setOverride) {
-        $(".soc_marker").css({ "display": "block", "opacity": 0 });
-        $(".soc_marker").animate({ "opacity": socMarkerOpacity }, markerAnimationDuration);
+        $(".soc-marker").css({ "display": "block", "opacity": 0 });
+        $(".soc-marker").animate({ "opacity": socMarkerOpacity }, markerAnimationDuration);
 
         socMarkerVisibility = "visible";
 
@@ -127,8 +127,8 @@ var soc = (function() {
     };
 
     var hideMarkers = function(setOverride) {
-        $(".soc_marker").animate({ "opacity": 0 }, markerAnimationDuration, function() {
-            $(".soc_marker").css({ "display": "none" });
+        $(".soc-marker").animate({ "opacity": 0 }, markerAnimationDuration, function() {
+            $(".soc-marker").css({ "display": "none" });
         });
 
         socMarkerVisibility = "hidden";
@@ -153,7 +153,7 @@ var soc = (function() {
     };
 
     var maximizeMarkers = function(setOverride) {
-        $(".soc_marker_text").css({ "display": "inline" });
+        $(".soc-marker__text").css({ "display": "inline" });
 
         socMarkerDisplay = "maximized";
 
@@ -163,7 +163,7 @@ var soc = (function() {
     }
 
     var minimizeMarkers = function(setOverride) {
-        $(".soc_marker_text").css({ "display": "none" });
+        $(".soc-marker__text").css({ "display": "none" });
 
         socMarkerDisplay = "minimized";
 
@@ -220,7 +220,7 @@ var soc = (function() {
 
     var createHeadingMarkers = function() {
         if (!$.isEmptyObject(headingMarkers)) {
-            $(".soc_marker").remove();
+            $(".soc-marker").remove();
             headings = {};
             headingMarkers = {};
         }
@@ -230,7 +230,7 @@ var soc = (function() {
         headings = getHeadingsFromPage();
 
         for (var i = 0; i < headings.length; i++) {
-            var markerId = "soc_" + (i + 1);
+            var markerId = "soc-" + (i + 1);
 
             headingMarkers[markerId] = new HeadingMarker(headings[i], markerId);
 
@@ -250,11 +250,11 @@ var soc = (function() {
         ------------------------------------------------*/
         if (socMarkerVisibility === "visible") {
             if (markersCreated === false) {
-                $(".soc_marker")
+                $(".soc-marker")
                     .css({ "display": "block", "opacity": 0 })
                     .animate({ "opacity": socMarkerOpacity }, markerAnimationDuration);
             } else {
-                $(".soc_marker").css({ "display": "block", "opacity": socMarkerOpacity });
+                $(".soc-marker").css({ "display": "block", "opacity": socMarkerOpacity });
             }
         }
 
@@ -328,10 +328,10 @@ var soc = (function() {
         var createMarker = function() {
             var newMarker = document.createElement("div");
             newMarker.setAttribute("id", markerId);
-            newMarker.setAttribute("class", "soc_marker");
+            newMarker.setAttribute("class", "soc-marker");
 
             var newMarkerText = document.createElement("span");
-            newMarkerText.setAttribute("class", "soc_marker_text");
+            newMarkerText.setAttribute("class", "soc-marker__text");
             newMarkerText.innerHTML = this.displayText;
 
             if (socMarkerDisplay === "minimized") {
@@ -343,30 +343,6 @@ var soc = (function() {
             $(newMarker).css({ "z-index": this.zIndex, "display": "none" });
 
             return newMarker;
-        }
-
-        var createArrow = function() {
-            var arrowCanvas = document.createElement("canvas");
-            arrowCanvas.setAttribute("width", "6px");
-            arrowCanvas.setAttribute("height", "10px");
-            arrowCanvas.setAttribute("class", "soc_marker_arrow");
-
-            if (typeof (G_vmlCanvasManager) !== "undefined") {
-                arrowCanvas = G_vmlCanvasManager.initElement(arrowCanvas);
-            }
-
-            var arrowContext = arrowCanvas.getContext("2d");
-
-            arrowContext.beginPath();
-            arrowContext.moveTo(5, 4);
-            arrowContext.lineTo(0, 0);
-            arrowContext.lineTo(0, 10);
-            arrowContext.lineTo(5, 6);
-            arrowContext.quadraticCurveTo(6, 5, 5, 4);
-            arrowContext.fillStyle = "rgba(28, 28, 28, .88)";
-            arrowContext.fill();
-
-            return arrowCanvas;
         }
 
         /*------------------------------------------------
@@ -407,9 +383,6 @@ var soc = (function() {
           Create a new marker
         ------------------------------------------------*/
         var newMarker = createMarker.apply(this);
-        var markerArrow = createArrow();
-
-        $(newMarker).append(markerArrow);
 
         $(newMarker).mouseenter(this.onMouseEnter);
         $(newMarker).mouseleave(this.onMouseLeave);
@@ -423,7 +396,7 @@ var soc = (function() {
 
     HeadingMarker.prototype.onMouseEnter = function() {
         var markerId = this.getAttribute("id");
-        var markerText = $(this).find(".soc_marker_text");
+        var markerText = $(this).find(".soc-marker__text");
 
         markerText.text(headingMarkers[markerId].headingText);
 
@@ -433,13 +406,11 @@ var soc = (function() {
             "z-index": markerZIndexMax,
             "opacity": 1
         });
-
-        $(this).addClass("soc_marker_hover");
     };
 
     HeadingMarker.prototype.onMouseLeave = function() {
         var markerId = this.getAttribute("id");
-        var markerText = $(this).find(".soc_marker_text");
+        var markerText = $(this).find(".soc-marker__text");
 
         markerText.text(headingMarkers[markerId].displayText);
 
@@ -449,8 +420,6 @@ var soc = (function() {
             "z-index": headingMarkers[markerId].zIndex,
             "opacity": socMarkerOpacity
         });
-
-        $(this).removeClass("soc_marker_hover");
     };
 
     HeadingMarker.prototype.onClick = function() {

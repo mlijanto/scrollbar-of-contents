@@ -158,9 +158,9 @@ button.mdl-button {
     font-size: 12px;
     line-height: 1.4em;
     text-shadow: none;
-    background: rgba( 48, 48, 48, 0.8 );
+    background: rgba( 28, 28, 28, 0.91 );
     border-radius: 4px;
-    box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
+    box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.88 );
     cursor: default;
     transition: opacity 0.28s;
     z-index: 10;
