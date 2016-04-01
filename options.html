@@ -1,369 +1,94 @@
 <html>
 <head>
-	<title>Scrollbar of Contents Options</title>
-	<style type="text/css">
-		body {
-			background: -webkit-radial-gradient( center 0px, circle farthest-corner, #f1f1f1 48%, #d8d8d8 100% );
-		}
-		
-		#container {
-			position: relative;
-			width: 380px;
-			margin: 80px auto;
-			padding: 36px 40px 48px;
-			text-align: center;
-			color: #484848;
-			text-shadow: 0px 1px 0px #fff;
-			font-family: arial, sans-serif;
-			font-size: 13px;
-			background: #f6f6f6;
-			border-radius: 13px;
-			box-shadow: 0px -2px 2px #fff, 0px 2px 2px #aaa;
-		}
-		
-		h1 {
-			color: #686868;
-			font-size: 23px;
-			letter-spacing: -1px;
-			text-shadow: 0px 1px 0px #fff;
-		}
-		
-		h1 span {
-			margin: 0px 0px 0px 2px;
-			color: #aaa;
-		}
-		
-		form {
-			width: 328px;
-			margin: 48px 0px 0px 36px;
-			text-align: left;
-		}
-		
-		select {
-			width: 280px;
-			height: 23px;
-			color: #484848;
-			margin: 8px 0px 28px;
-			background: -webkit-linear-gradient( top, #fff, #fff );
-			border: 1px solid #b1b1b1;
-			cursor: pointer;
-		}
-		
-		input[ type = checkbox ] {
-			margin: 10px 0px 8px 2px;
-		}
-		
-		button {
-			width: 140px;
-			height: 40px;
-			margin: 28px 15px 0px -1px;
-			padding: 8px 13px 9px;
-			color: #484848;
-			text-shadow: 0px 1px 0px #fff;
-			background: -webkit-linear-gradient( top, #f1f1f1, #d1d1d1 );
-			border-radius: 8px;
-			border: none;
-			box-shadow: 0px -1px 1px #fff, 0px 1px 1px #aaa;
-			cursor: pointer;
-		}
-		
-		button:hover {
-			background: -webkit-linear-gradient( top, #d8d8d8, #b1b1b1 );
-			box-shadow: 0px -1px 1px #fff, 0px 1px 1px #888;
-		}
-		
-		#info_level_container {
-			position: absolute;
-			top: 300px;
-			left: 364px;
-		}
-		
-		#info_level_icon {
-			width: 20px;
-			height: 20px;
-			background: url( "images/icon_info.png" ) no-repeat;
-			cursor: pointer;
-		}
-		
-		#info_level_icon:hover {
-			background: url( "images/icon_info_hover.png" ) no-repeat;
-		}
-		
-		#info_container {
-			opacity: 0;
-			position: absolute;
-			width: 196px;
-			margin: 0px;
-			top: -24px;
-			left: 28px;
-			padding: 8px 13px;
-			text-align: left;
-			color: #f1f1f1;
-			font-family: arial, sans-serif;
-			font-size: 12px;
-			line-height: 1.5em;
-			text-shadow: none;
-			background: rgba( 48, 48, 48, 0.8 );
-			-webkit-border-radius: 8px;
-			-webkit-box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
-			cursor: default;
-			
-			-webkit-transition-property: opacity;
-			-webkit-transition-duration: 0.28s;
-		}
-		
-		#info_arrow {
-			position: absolute;
-			bottom: 29px;
-			left: -8px;
-		}
-		
-		#notification {
-			display: none;
-			opacity: 0;
-			position: absolute;
-			margin: 0px;
-			top: 140px;
-			left: 140px;
-			padding: 28px 28px;
-			text-align: left;
-			color: #f1f1f1;
-			font-family: arial, sans-serif;
-			font-size: 13px;
-			line-height: 1.5em;
-			text-shadow: none;
-			background: rgba( 48, 48, 48, 0.8 );
-			-webkit-border-radius: 8px;
-			-webkit-box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
-		}
-		
-		#info_keyboard_shortcut_container {
-			width: 313px;
-			margin: 42px 0px 8px -2px;
-			padding: 13px 0px 0px 2px;
-			color: #888;
-			border-top: 1px solid #d8d8d8;
-		}
-		
-		#info_keyboard_shortcut_container ul {
-			margin: 0px;
-			padding: 0px 0px 0px 20px;
-		}
-		
-		#info_keyboard_shortcut_container li {
-			margin: 0px 0px 8px;
-			padding: 0px;
-		}
-		
-		#info_keyboard_shortcut_container li span {
-			margin: 0px 2px;
-		}
-	</style>
-	<script type="text/javascript">
-	
-		function init()
-		{
-			restoreOptions();
-			drawInfoArrow();
-			
-			infoLevelIcon = document.getElementById( "info_level_icon" );
-			infoLevelIcon.addEventListener( "mouseover", infoLevelIconEnterHandler );
-			infoLevelIcon.addEventListener( "mouseout", infoLevelIconOutHandler );
-		}
-		
-		// Saves options to localStorage.
-		function saveOptions()
-		{
-			var display = document.getElementById("display");
-			var textLength = document.getElementById("textLength");
-			var level = document.getElementById("level");
-			var overlap = document.getElementById("overlap");
-			//var toggleVisibityOnHover = document.getElementById("toggleVisibityOnHover");
-			
-			var displayValue = display.children[ display.selectedIndex ].value;
-			var textLengthValue = textLength.children[ textLength.selectedIndex ].value;
-			var levelValue = level.children[ level.selectedIndex ].value;
-			var overlapValue = overlap.checked;
-			//var toggleVisibityOnHoverValue = toggleVisibityOnHover.checked;
-			
-			localStorage[ "displayOption" ] = displayValue;
-			localStorage[ "textLengthOption" ] = textLengthValue;
-			localStorage[ "levelOption" ] = levelValue;
-			localStorage[ "overlapOption" ] = overlapValue;
-			//localStorage[ "toggleVisibityOnHoverOption" ] = toggleVisibityOnHoverValue;
-		}
-		
-		// Restores saved values from localStorage.
-		function restoreOptions()
-		{
-			var display = document.getElementById("display");
-			var textLength = document.getElementById("textLength");
-			var level = document.getElementById("level");
-			var overlap = document.getElementById("overlap");
-			//var toggleVisibityOnHover = document.getElementById("toggleVisibityOnHover");
-			
-			var displayValue = localStorage[ "displayOption" ];
-			var textLengthValue = localStorage[ "textLengthOption" ];
-			var levelValue = localStorage[ "levelOption" ];
-			var overlapValue = localStorage[ "overlapOption" ];
-			//var toggleVisibityOnHoverValue = localStorage[ "toggleVisibityOnHoverOption" ];
-			
-			if ( !displayValue )
-				displayValue = "hidden";
-			
-			if ( !textLengthValue )
-				textLengthValue = "entireText";
-				
-			if ( !levelValue )
-				levelValue = "3";			
-			
-			for (var i = 0; i < display.children.length; i++)
-			{
-				var child = display.children[ i ];
-				if (child.value == displayValue)
-				{
-				  child.selected = "true";
-				  break;
-				}
-			}
-			
-			for (var i = 0; i < textLength.children.length; i++)
-			{
-				var child = textLength.children[ i ];
-				if (child.value == textLengthValue)
-				{
-				  child.selected = "true";
-				  break;
-				}
-			}
-			
-			for (var i = 0; i < level.children.length; i++)
-			{
-				var child = level.children[ i ];
-				if (child.value == levelValue)
-				{
-				  child.selected = "true";
-				  break;
-				}
-			}			
-			
-			if( overlapValue == "true" )
-				overlap.checked = true;
-			else if( overlapValue == "false" )
-				overlap.checked = false;
-			else
-			{
-				overlapValue = true;
-				overlap.checked = true;
-			}
-			
-			/*if( toggleVisibityOnHoverValue == "true" )
-				toggleVisibityOnHover.checked = true;
-			else if( toggleVisibityOnHover == "false" )
-				toggleVisibityOnHover.checked = false;
-			else
-			{
-				toggleVisibityOnHoverValue = false
-				toggleVisibityOnHover.checked = false;
-			}*/
-		}
-		
-		function restoreDefault()
-		{
-			var displayValue = "hidden";
-			var textLengthValue = "entireText";
-			var levelValue = "3";
-			var overlapValue = true;
-			//var toggleVisibityOnHoverValue = false;
-			
-			localStorage[ "displayOption" ] = displayValue;
-			localStorage[ "textLengthOption" ] = textLengthValue;
-			localStorage[ "levelOption" ] = levelValue;
-			localStorage[ "overlapOption" ] = overlapValue;
-			//localStorage[ "toggleVisibityOnHoverOption" ] = toggleVisibityOnHoverValue;
-		}
-		
-		function drawInfoArrow()
-		{
-		    var arrowCanvas = document.getElementById( "info_arrow" );
-		    var arrowCtx = arrowCanvas.getContext( "2d" );
-		
-		    arrowCtx.beginPath();
-		    arrowCtx.moveTo( 1, 6 );
-		    arrowCtx.lineTo( 8, 0 );
-		    arrowCtx.lineTo( 8, 13 );
-		    arrowCtx.lineTo( 1, 8 );
-		    arrowCtx.quadraticCurveTo( 0, 7, 1, 6 );
-		    arrowCtx.fillStyle = "rgba( 48, 48, 48, 0.8 )";
-		    arrowCtx.fill();		
-		}
-		
-		function infoLevelIconEnterHandler()
-		{
-			infoContainer = document.getElementById( "info_container" );
-			infoContainer.style.display = "block";
-			infoContainer.style.opacity = 1;
-		}
-		
-		function infoLevelIconOutHandler()
-		{
-			infoContainer = document.getElementById( "info_container" );
-			infoContainer.style.opacity = 0;
-		}
-	
-	</script>
+    <title>Scrollbar of Contents Options</title>
+    <link rel="stylesheet" type="text/css" href="css/external/material.min.css">
+    <link rel="stylesheet" type="text/css" href="css/options.css">
 </head>
-<body onload="init()">
-	<div id="container">
-		<h1>Scrollbar of Contents <span>Options</span></h1>
-		<form>
-			<label for="display">When a page loads,</label>
-			<br />
-			<select id="display" onchange="saveOptions()">
-				<option value="maximized">show markers on scrollbar</option>
-				<option value="minimized">show minimized markers on scrollbar</option>
-				<option value="hidden">hide markers</option>
-			</select>
-			<br />
-			<label for="textLength">On each maximized marker,</label>
-			<br />
-			<select id="textLength" onchange="saveOptions()">
-				<option value="entireText">show the entire heading text</option>
-				<option value="firstThreeWords">show the first three words</option>
-				<option value="firstTenCharacters">show the first ten characters</option>
-			</select>
-			<br />
-			<label for="level">Levels of headings shown:</label>
-			<br />
-			<select id="level" onchange="saveOptions()">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3 (recommended)</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-			</select>
-			<div id="info_level_container">
-				<div id="info_level_icon"></div>
-				<div id="info_container">
-					There are six levels of headings in web pages, from 1 as the most important to 6 as the least important.
-					<canvas id="info_arrow" width="8px" height="13px"></canvas>
-				</div>
-			</div>
-			<br />
-			<input id="overlap" type="checkbox" onchange="saveOptions()"> Prevent overlapping markers if possible</input>
-			<br />
-			<!--<input id="toggleVisibityOnHover" type="checkbox" onchange="saveOptions()"> Show markers when cursor hovers near scrollbar</input>
-			<br />-->
-			<button onclick="restoreDefault()">Restore Default</button>
-			<div id="info_keyboard_shortcut_container">
-				<p>Keyboard shortcuts:</p>
-				<ul>
-					<li>Minimize<span>/</span>maximize markers ( Shift-Alt-M )</li>
-					<li>Show<span>/</span>hide markers ( Shift-Alt-N )</li>
-				</ul>
-			</div>
-		</form>
-	</div>
+<body>
+    <div class="mdl-layout mdl-js-layout">
+        <div class="mdl-layout__content">
+            <div class="mdl-grid">
+                <div class="options mdl-cell mdl-cell--4-col mdl-cell--middle">
+
+                    <h1 class="options_header mdl-typography--font-bold mdl-typography--text-center">
+                        Scrollbar of Contents
+                        <span>Options</span>
+                    </h1>
+
+                    <form class="options_form form mdl-typography--body-1">
+                        <label for="form_diplay">When a page loads,</label>
+                        <br>
+                        <select id="form_display" class="mdl-typography--body-1">
+                            <option id="display--maximized" value="maximized">show markers</option>
+                            <option id="display--minimized" value="minimized">show minimized markers</option>
+                            <option id="display--hidden" value="hidden">hide markers</option>
+                        </select>
+                        <br>
+
+                        <label for="form_text-length">On each maximized marker,</label>
+                        <br>
+                        <select id="form_text-length" class="mdl-typography--body-1">
+                            <option id="textLength--entireText" value="entireText">show the entire heading text</option>
+                            <option id="textLength--firstThreeWords" value="firstThreeWords">show the first three words</option>
+                            <option id="textLength--firstTenCharacters" value="firstTenCharacters">show the first ten characters</option>
+                        </select>
+                        <br>
+
+                        <a id="form_advanced-button" class="form_advanced-button">
+                            Advanced options
+                            <canvas id="form_advanced-arrow" class="form_advanced-arrow" width="11px" height="11px"></canvas>
+                        </a>
+
+                        <div id="form_advanced" class="form_advanced">
+                            <label for="form_advanced_opacity" class="form_advanced_opacity-label">Markers opacity:</label>
+                            <div class="form_advanced_opacity">
+                                <span class="form_advanced_opacity_label">transparent</span>
+                                <input id="form_advanced_opacity_input" class="mdl-slider mdl-js-slider" type="range" min="0" max="100" tabindex="0">
+                                <span class="form_advanced_opacity_label">opaque</span>
+                            </div>
+
+                            <label for="form_advanced_level">Levels of headings shown:</label>
+                            <br>
+                            <select id="form_advanced_level" class="mdl-typography--body-1">
+                                <option id="level--1" value="1">1</option>
+                                <option id="level--2" value="2">2</option>
+                                <option id="level--3" value="3">3 (recommended)</option>
+                                <option id="level--4" value="4">4</option>
+                                <option id="level--5" value="5">5</option>
+                                <option id="level--6" value="6">6</option>
+                            </select>
+
+                            <span id="form_advanced_info-level" class="form_advanced_info-level">
+                            </span>
+
+                            <label class="form_advanced_overlap mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="form_advanced_overlap_input">
+                                <input type="checkbox" id="form_advanced_overlap_input" class="mdl-checkbox__input">
+                                <span class="mdl-checkbox__label">Prevent overlapping markers when possible</span>
+                            </label>
+                        </div>
+
+                        <button id="form_reset" class="form_reset mdl-button mdl-js-button mdl-button--raised mdl-typography--text-capitalize">
+                            Reset options
+                        </button>
+
+                        <div class="form_keyboard">
+                            <p>Keyboard shortcuts:</p>
+                            <ul>
+                                <li>Minimize<span>/</span>maximize markers ( Shift-Alt-M )</li>
+                                <li>Show<span>/</span>hide markers ( Shift-Alt-N )</li>
+                            </ul>
+                        </div>
+
+                        <div id="tooltip-level" class="form_tooltip-info tooltip-level">
+                            There are six levels of headings on webpages, from 1 as the most important to 6 as the least important.
+                            <canvas id="tooltip-level_arrow" class="tooltip-level_arrow" width="8px" height="13px"></canvas>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script defer src="js/external/material.min.js"></script>
+    <script src="js/options.js"></script>
 </body>
 </html>

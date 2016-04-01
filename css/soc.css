@@ -1,25 +1,56 @@
-.soc_marker {
-	position: fixed;
-	width: auto;
-	min-width: 8px;
-	max-width: 280px;
-	min-height: 18px;
-	right: 6px;
-	margin: 0px;
-	padding: 4px 8px 4px 8px;
-	color: #f1f1f1;
-	font-family: arial, sans-serif;
-	font-size: 11px;
-	line-height: 1.5em;
-	text-transform: capitalize;
-	background: rgba( 28, 28, 28, 0.88 );
-	-webkit-border-radius: 4px;
-	-webkit-box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
-	cursor: pointer;
+.soc-marker,
+.soc-marker * {
+    margin: 0;
+    padding: 0;
 }
 
-.soc_marker_arrow {
-	position: absolute;
-	top: 7px;
-	right: -6px;
+.soc-marker {
+    position: fixed;
+    width: auto;
+    min-width: 24px;
+    max-width: 280px;
+    min-height: 24px;
+    right: 6px;
+    margin: 0px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: helvetica, arial, sans-serif;
+    font-size: 11px;
+    line-height: 1.5em;
+    text-transform: capitalize;
+    color: #f1f1f1;
+    background-color: rgba( 28, 28, 28, 0.91 );
+    box-shadow: 0px 0px 2px rgba( 28, 28, 28, 0.88 );
+    transition-property: opacity, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+    cursor: pointer;
+}
+
+.soc-marker::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 8px;
+    right: -8px;
+    border: 4px solid rgba( 28, 28, 28, 0.91 );
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+}
+
+.soc-marker:hover {
+    color: #282828;
+    background-color: #f1f1f1;
+    box-shadow: 0px 0px 6px rgba( 28, 28, 28, 0.8 );
+}
+
+.soc-marker:hover::before {
+    border-left-color: #919191;
+}
+
+.soc-marker:hover:active {
+    box-shadow: 0px 0px 4px rgba( 28, 28, 28, 0.8 );
 }
