@@ -1,4 +1,4 @@
-soc = (function(soc) {
+const soc = (function(soc) {
   soc.filterHeading = function(headingElement) {
     var headingText = headingElement.innerText.toLowerCase();
     var filteredHeadingText = "";

@@ -3,8 +3,8 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
   entry: {
     soc: "./src/js/soc.js",
-    filterHeading: "./src/js/eventPage.js",
-    eventPage: "./src/js/eventPage.js",
+    filterHeading: "./src/ts/filterHeading.ts",
+    background: "./src/ts/background.ts",
     options: "./src/js/options.js"
   },
   mode: "production",

@@ -10,7 +10,7 @@
   },
   "options_page": "options.html",
   "background": {
-    "scripts": ["js/eventPage.js"],
+    "scripts": ["js/background.js"],
     "persistent": false
   },
   "browser_action": {
