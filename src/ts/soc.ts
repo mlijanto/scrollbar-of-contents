@@ -28,10 +28,18 @@ export interface IConfig {
   preventOverlap: boolean;
 }
 
-export class Soc {
+export const DefaultConfig: IConfig = {
+  visibility: Visibility.Hidden,
+  display: Display.Hidden,
+  textLength: TextLength.FirstThreeWords,
+  opacity: 0.91,
+  maxLevel: 3,
+  preventOverlap: true
+};
+
+class Soc {
   private store: IHeadingMarkerStore;
   private hostName: string;
-  private isIncognito: boolean = false;
   private headings: HTMLElement[] = [];
   private config: IConfig;
   private visibility: Visibility = Visibility.Hidden;
@@ -49,19 +57,9 @@ export class Soc {
     this.hostVisibilityOverrideStorageKey = "visibilityOverride-" + this.hostName;
     this.hostDisplayOverrideStorageKey = "displayOverride-" + this.hostName;
 
-    this.config = {
-      visibility: Visibility.Hidden,
-      display: Display.Hidden,
-      textLength: TextLength.FirstThreeWords,
-      opacity: 0.91,
-      maxLevel: 3,
-      preventOverlap: true
-    };
+    this.config = DefaultConfig;
 
-    chrome.runtime.sendMessage({ query: "checkIncognito" }, response => {
-      this.isIncognito = response.incognito;
-      this.retrieveOptions();
-    });
+    this.retrieveOptions();
 
     /**
      * Listen for tab updates and tab selection changes to keep tab data up to date
@@ -271,7 +269,7 @@ export class Soc {
 
     this.visibility = Visibility.Visible;
 
-    if (shouldSetOverride && !this.isIncognito) {
+    if (shouldSetOverride && !chrome.extension.inIncognitoContext) {
       this.updateVisibilityOverride();
     }
   };
@@ -283,7 +281,7 @@ export class Soc {
 
     this.visibility = Visibility.Hidden;
 
-    if (shouldSetOverride && !this.isIncognito) {
+    if (shouldSetOverride && !chrome.extension.inIncognitoContext) {
       this.updateVisibilityOverride();
     }
   };
@@ -307,7 +305,7 @@ export class Soc {
 
     this.display = Display.Maximized;
 
-    if (shouldSetOverride && !this.isIncognito) {
+    if (shouldSetOverride && !chrome.extension.inIncognitoContext) {
       this.updateDisplayOverride();
     }
   };
@@ -319,7 +317,7 @@ export class Soc {
 
     this.display = Display.Minimized;
 
-    if (shouldSetOverride && !this.isIncognito) {
+    if (shouldSetOverride && !chrome.extension.inIncognitoContext) {
       this.updateDisplayOverride();
     }
   };
@@ -350,3 +348,7 @@ export class Soc {
     }
   };
 }
+
+((): void => {
+  new Soc();
+})();
