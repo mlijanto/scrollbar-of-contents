@@ -2,10 +2,10 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: {
-    soc: "./src/js/soc.js",
+    soc: "./src/ts/soc.ts",
     filterHeading: "./src/ts/filterHeading.ts",
     background: "./src/ts/background.ts",
-    options: "./src/js/options.js"
+    options: "./src/ts/options.ts"
   },
   mode: "production",
   devtool: "inline-source-map",

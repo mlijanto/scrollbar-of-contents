@@ -67,11 +67,13 @@ class Soc {
      */
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       switch (message.tabEvent) {
-        case "selectionChanged":
+        case "activated":
+          console.log("activated");
           this.retrieveOptions();
           break;
 
         case "updated":
+          console.log("updated");
           // Update markers if they have been created
           if (this.store.isHeadingMarkersCreated) {
             this.createHeadingMarkers();
@@ -79,6 +81,7 @@ class Soc {
           break;
 
         case "browserActionClicked":
+          console.log("browserActionClicked");
           this.toggleVisibility();
           break;
       }
@@ -208,14 +211,12 @@ class Soc {
   };
 
   private clearHeadingMarkers = (): void => {
-    const headingMarkerElements: HTMLCollectionOf<Element> = document.getElementsByClassName("soc-marker");
-
-    for (let i: number = 0; i < headingMarkerElements.length; i++) {
-      headingMarkerElements[i].remove();
+    for (let marker of this.store.headingMarkers) {
+      marker.domElement.remove();
     }
 
-    this.headings = [];
-    this.store.headingMarkers = [];
+    this.headings.length = 0;
+    this.store.headingMarkers.length = 0;
   };
 
   private getHeadingsOnPage = () => {
@@ -349,6 +350,4 @@ class Soc {
   };
 }
 
-((): void => {
-  new Soc();
-})();
+new Soc();

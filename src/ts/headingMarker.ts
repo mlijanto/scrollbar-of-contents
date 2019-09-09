@@ -18,7 +18,6 @@ export interface IHeadingMarker {
 export class HeadingMarker implements IHeadingMarker {
   private readonly zIndexMin: number = 100001;
   private readonly reservedMarkerHeight: number = 28;
-  private readonly scrollDuration: number = 800;
   private readonly transitionDuration: number = 280;
 
   private store: IHeadingMarkerStore;
@@ -52,7 +51,7 @@ export class HeadingMarker implements IHeadingMarker {
   }
 
   public setPosition = (): void => {
-    const winToDocHeightRatio: number = window.innerHeight / document.body.clientHeight;
+    const winToDocHeightRatio: number = window.innerHeight / document.body.scrollHeight;
 
     // Get latest heading position
     this.headingPosition = this.getPosition(this.heading);
@@ -177,12 +176,10 @@ export class HeadingMarker implements IHeadingMarker {
   };
 
   private handleClick = (): void => {
-    console.log("clicked: scroll");
-
-    // $.scrollTo(headingMarkers[this.getAttribute("id")].topPos, {
-    //   duration: scrollDuration,
-    //   easing: "swing"
-    // });
+    window.scroll({
+      top: this.headingPosition.top,
+      behavior: "smooth"
+    });
   };
 
   /**
