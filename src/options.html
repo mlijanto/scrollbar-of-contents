@@ -1,50 +1,48 @@
 <html>
   <head>
     <title>Scrollbar of Contents Options</title>
+    <link rel="stylesheet" type="text/css" href="css/external/normalize.css" />
     <link rel="stylesheet" type="text/css" href="css/external/material-components-web.min.css" />
     <link rel="stylesheet" type="text/css" href="css/options.css" />
   </head>
   <body>
-    <div class="mdl-layout mdl-js-layout">
-      <div class="mdl-layout__content">
-        <div class="mdl-grid">
-          <div class="options mdl-cell mdl-cell--4-col mdl-cell--middle">
-            <h1 class="options_header mdl-typography--font-bold mdl-typography--text-center">
-              Scrollbar of Contents
-              <span>Options</span>
-            </h1>
+    <div class="options">
+      <h1 class="options_header">Scrollbar of Contents<span>Options</span></h1>
 
-            <form class="options_form form mdl-typography--body-1">
-              <label for="form_diplay">When a page loads,</label>
-              <br />
-              <select id="form_display" class="mdl-typography--body-1">
-                <option id="display--maximized" value="maximized">show markers</option>
-                <option id="display--minimized" value="minimized">show minimized markers</option>
-                <option id="display--hidden" value="hidden">hide markers</option>
-              </select>
-              <br />
+      <form class="options_form">
+        <label for="form_diplay">When a page loads,</label>
+        <br />
+        <select id="form_display">
+          <option id="display--maximized" value="maximized">show markers</option>
+          <option id="display--minimized" value="minimized">show minimized markers</option>
+          <option id="display--hidden" value="hidden">hide markers</option>
+        </select>
+        <br />
 
-              <label for="form_text-length">On each maximized marker,</label>
-              <br />
-              <select id="form_text-length" class="mdl-typography--body-1">
-                <option id="textLength--entireText" value="entireText">show the entire heading text</option>
-                <option id="textLength--firstThreeWords" value="firstThreeWords">show the first three words</option>
-                <option id="textLength--firstTenCharacters" value="firstTenCharacters"
-                  >show the first ten characters</option
-                >
-              </select>
-              <br />
+        <label for="form_text-length">On each maximized marker,</label>
+        <br />
+        <select id="form_text-length">
+          <option id="textLength--entireText" value="entireText">show the entire heading text</option>
+          <option id="textLength--firstThreeWords" value="firstThreeWords">show the first three words</option>
+          <option id="textLength--firstTenCharacters" value="firstTenCharacters">show the first ten characters</option>
+        </select>
+        <br />
 
-              <a id="form_advanced-button" class="form_advanced-button">
-                Advanced options
-                <canvas id="form_advanced-arrow" class="form_advanced-arrow" width="11px" height="11px"></canvas>
-              </a>
+        <a id="form_advanced-button" class="form_advanced-button">
+          <span>Advanced options</span>
+          <canvas
+            id="form_advanced-button_arrow"
+            class="form_advanced-button_arrow"
+            width="11px"
+            height="11px"
+          ></canvas>
+        </a>
 
-              <div id="form_advanced" class="form_advanced">
-                <label for="form_advanced_opacity" class="form_advanced_opacity-label">Markers opacity:</label>
-                <div class="form_advanced_opacity">
-                  <span class="form_advanced_opacity_label">transparent</span>
-                  <!-- <input
+        <div id="form_advanced" class="form_advanced">
+          <label for="form_advanced_opacity" class="form_advanced_opacity_label">Markers opacity:</label>
+          <div class="form_advanced_opacity">
+            <span class="form_advanced_opacity_input-label">transparent</span>
+            <!-- <input
                     id="form_advanced_opacity_input"
                     class="mdl-slider mdl-js-slider"
                     type="range"
@@ -52,85 +50,82 @@
                     max="100"
                     tabindex="0"
                   /> -->
-                  <div
-                    class="mdc-slider"
-                    tabindex="0"
-                    role="slider"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    aria-valuenow="0"
-                    aria-label="Opacity value"
-                  >
-                    <div class="mdc-slider__track-container">
-                      <div class="mdc-slider__track"></div>
-                    </div>
-                    <div class="mdc-slider__thumb-container">
-                      <svg class="mdc-slider__thumb" width="21" height="21">
-                        <circle cx="10.5" cy="10.5" r="7.875"></circle>
-                      </svg>
-                      <div class="mdc-slider__focus-ring"></div>
-                    </div>
-                  </div>
-                  <span class="form_advanced_opacity_label">opaque</span>
-                </div>
+            <div
+              class="mdc-slider form_advanced_opacity_input"
+              tabindex="0"
+              role="slider"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              aria-label="Opacity value"
+            >
+              <div class="mdc-slider__track-container">
+                <div class="mdc-slider__track"></div>
+              </div>
+              <div class="mdc-slider__thumb-container">
+                <svg class="mdc-slider__thumb" width="21" height="21">
+                  <circle cx="10.5" cy="10.5" r="7.875"></circle>
+                </svg>
+                <div class="mdc-slider__focus-ring"></div>
+              </div>
+            </div>
+            <span class="form_advanced_opacity_input-label">opaque</span>
+          </div>
 
-                <label for="form_advanced_level">Levels of headings shown:</label>
-                <br />
-                <select id="form_advanced_level" class="mdl-typography--body-1">
-                  <option id="level--1" value="1">1</option>
-                  <option id="level--2" value="2">2</option>
-                  <option id="level--3" value="3">3 (recommended)</option>
-                  <option id="level--4" value="4">4</option>
-                  <option id="level--5" value="5">5</option>
-                  <option id="level--6" value="6">6</option>
-                </select>
+          <label for="form_advanced_level">Levels of headings shown:</label>
+          <br />
+          <select id="form_advanced_level" class="">
+            <option id="level--1" value="1">1</option>
+            <option id="level--2" value="2">2</option>
+            <option id="level--3" value="3">3 (recommended)</option>
+            <option id="level--4" value="4">4</option>
+            <option id="level--5" value="5">5</option>
+            <option id="level--6" value="6">6</option>
+          </select>
 
-                <span id="form_advanced_info-level" class="form_advanced_info-level"> </span>
+          <span id="form_advanced_info-level" class="form_advanced_info-level"> </span>
 
-                <!-- <label
+          <!-- <label
                   class="form_advanced_overlap mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
                   for="form_advanced_overlap_input"
                 >
                   <input type="checkbox" id="form_advanced_overlap_input" class="mdl-checkbox__input" />
                   <span class="mdl-checkbox__label">Prevent overlapping markers when possible</span>
                 </label> -->
-                <div class="mdc-form-field">
-                  <div class="mdc-checkbox">
-                    <input type="checkbox" class="mdc-checkbox__native-control" id="checkbox-1" />
-                    <div class="mdc-checkbox__background">
-                      <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-                        <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                      </svg>
-                      <div class="mdc-checkbox__mixedmark"></div>
-                    </div>
-                  </div>
-                  <label for="checkbox-1">Checkbox 1</label>
-                </div>
+          <div class="mdc-form-field form_advanced_overlap">
+            <div class="mdc-checkbox form_advanced_overlap_checkbox">
+              <input type="checkbox" class="mdc-checkbox__native-control" id="overlapOption" />
+              <div class="mdc-checkbox__background">
+                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                  <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                </svg>
+                <div class="mdc-checkbox__mixedmark"></div>
               </div>
-
-              <button
-                id="form_reset"
-                class="form_reset mdl-button mdl-js-button mdl-button--raised mdl-typography--text-capitalize"
-              >
-                Reset options
-              </button>
-
-              <div class="form_keyboard">
-                <p>Keyboard shortcuts:</p>
-                <ul>
-                  <li>Minimize<span>/</span>maximize markers ( Shift-Alt-M )</li>
-                  <li>Show<span>/</span>hide markers ( Shift-Alt-N )</li>
-                </ul>
-              </div>
-
-              <div id="tooltip-level" class="form_tooltip-info tooltip-level">
-                There are six levels of headings on webpages, from 1 as the most important to 6 as the least important.
-                <canvas id="tooltip-level_arrow" class="tooltip-level_arrow" width="8px" height="13px"></canvas>
-              </div>
-            </form>
+            </div>
+            <label for="overlapOption">Prevent overlapping markers when possible</label>
           </div>
         </div>
-      </div>
+
+        <button
+          id="form_reset"
+          class="form_reset mdl-button mdl-js-button mdl-button--raised mdl-typography--text-capitalize"
+        >
+          Reset options
+        </button>
+
+        <div class="form_keyboard">
+          <p>Keyboard shortcuts:</p>
+          <ul>
+            <li>Minimize<span>/</span>maximize markers ( Shift-Alt-M )</li>
+            <li>Show<span>/</span>hide markers ( Shift-Alt-N )</li>
+          </ul>
+        </div>
+
+        <div id="tooltip-level" class="form_tooltip-info tooltip-level">
+          There are six levels of headings on webpages, from 1 as the most important to 6 as the least important.
+          <canvas id="tooltip-level_arrow" class="tooltip-level_arrow" width="8px" height="13px"></canvas>
+        </div>
+      </form>
     </div>
     <!-- <script defer src="js/external/material.min.js"></script> -->
     <script src="js/options.js"></script>

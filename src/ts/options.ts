@@ -23,16 +23,16 @@ class Options {
     this.textLengthOption = document.getElementById("form_text-length")! as HTMLSelectElement;
     this.levelOption = document.getElementById("form_advanced_level")! as HTMLSelectElement;
     this.resetOption = document.getElementById("form_reset")!;
-    this.advancedButtonArrow = document.getElementById("form_advanced-arrow")! as HTMLCanvasElement;
+    this.advancedButtonArrow = document.getElementById("form_advanced-button_arrow")! as HTMLCanvasElement;
     this.levelInfoTooltip = document.getElementById("tooltip-level")!;
 
-    this.overlapOption = new MDCCheckbox(document.querySelector(".mdc-checkbox")!);
+    this.overlapOption = new MDCCheckbox(document.querySelector(".form_advanced_overlap_checkbox")!);
     this.overlapOption.listen("MDCCheckbox:change", this.saveOptions);
 
-    const overlapFormField: MDCFormField = new MDCFormField(document.querySelector(".mdc-form-field")!);
+    const overlapFormField: MDCFormField = new MDCFormField(document.querySelector(".form_advanced_overlap")!);
     overlapFormField.input = this.overlapOption;
 
-    this.opacityOption = new MDCSlider(document.querySelector(".mdc-slider")!);
+    this.opacityOption = new MDCSlider(document.querySelector(".form_advanced_opacity_input")!);
     this.opacityOption.listen("MDCSlider:change", this.saveOptions);
 
     this.restoreOptions();

@@ -68,12 +68,10 @@ class Soc {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       switch (message.tabEvent) {
         case "activated":
-          console.log("activated");
           this.retrieveOptions();
           break;
 
         case "updated":
-          console.log("updated");
           // Update markers if they have been created
           if (this.store.isHeadingMarkersCreated) {
             this.createHeadingMarkers();
@@ -81,7 +79,6 @@ class Soc {
           break;
 
         case "browserActionClicked":
-          console.log("browserActionClicked");
           this.toggleVisibility();
           break;
       }
