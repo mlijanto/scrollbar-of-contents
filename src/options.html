@@ -28,7 +28,7 @@
         </select>
         <br />
 
-        <a id="form_advanced-button" class="form_advanced-button">
+        <a id="form_advanced-button">
           <span>Advanced options</span>
           <canvas
             id="form_advanced-button_arrow"
@@ -38,18 +38,10 @@
           ></canvas>
         </a>
 
-        <div id="form_advanced" class="form_advanced">
-          <label for="form_advanced_opacity" class="form_advanced_opacity_label">Markers opacity:</label>
+        <div id="form_advanced">
+          <label class="form_advanced_opacity_label">Markers opacity:</label>
           <div class="form_advanced_opacity">
             <span class="form_advanced_opacity_input-label">transparent</span>
-            <!-- <input
-                    id="form_advanced_opacity_input"
-                    class="mdl-slider mdl-js-slider"
-                    type="range"
-                    min="0"
-                    max="100"
-                    tabindex="0"
-                  /> -->
             <div
               class="mdc-slider form_advanced_opacity_input"
               tabindex="0"
@@ -83,18 +75,11 @@
             <option id="level--6" value="6">6</option>
           </select>
 
-          <span id="form_advanced_info-level" class="form_advanced_info-level"> </span>
+          <span id="form_advanced_info-level"> </span>
 
-          <!-- <label
-                  class="form_advanced_overlap mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                  for="form_advanced_overlap_input"
-                >
-                  <input type="checkbox" id="form_advanced_overlap_input" class="mdl-checkbox__input" />
-                  <span class="mdl-checkbox__label">Prevent overlapping markers when possible</span>
-                </label> -->
           <div class="mdc-form-field form_advanced_overlap">
             <div class="mdc-checkbox form_advanced_overlap_checkbox">
-              <input type="checkbox" class="mdc-checkbox__native-control" id="overlapOption" />
+              <input type="checkbox" class="mdc-checkbox__native-control" id="form_advanced_overlap_input" />
               <div class="mdc-checkbox__background">
                 <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
                   <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
@@ -102,15 +87,14 @@
                 <div class="mdc-checkbox__mixedmark"></div>
               </div>
             </div>
-            <label for="overlapOption">Prevent overlapping markers when possible</label>
+            <label for="form_advanced_overlap_input" class="form_advanced_overlap_label"
+              >Prevent overlapping markers when possible</label
+            >
           </div>
         </div>
 
-        <button
-          id="form_reset"
-          class="form_reset mdl-button mdl-js-button mdl-button--raised mdl-typography--text-capitalize"
-        >
-          Reset options
+        <button id="form_reset" class="mdc-button mdc-button--raised mdc-ripple-surface">
+          <span class="mdc-button__label">Reset options</span>
         </button>
 
         <div class="form_keyboard">

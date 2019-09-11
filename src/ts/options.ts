@@ -1,5 +1,6 @@
-import { MDCFormField } from "@material/form-field";
 import { MDCCheckbox } from "@material/checkbox";
+import { MDCFormField } from "@material/form-field";
+import { MDCRipple } from "@material/ripple";
 import { MDCSlider } from "@material/slider";
 import { IConfig, DefaultConfig, Display, TextLength } from "./soc";
 
@@ -13,8 +14,8 @@ class Options {
   private resetOption: HTMLElement;
   private advancedButtonArrow: HTMLCanvasElement;
   private levelInfoTooltip: HTMLElement;
-  private overlapOption: MDCCheckbox;
   private opacityOption: MDCSlider;
+  private overlapOption: MDCCheckbox;
   private isAdvancedOptionsExpanded: boolean = false;
 
   constructor() {
@@ -26,17 +27,14 @@ class Options {
     this.advancedButtonArrow = document.getElementById("form_advanced-button_arrow")! as HTMLCanvasElement;
     this.levelInfoTooltip = document.getElementById("tooltip-level")!;
 
+    this.opacityOption = new MDCSlider(document.querySelector(".form_advanced_opacity_input")!);
+    this.opacityOption.listen("MDCSlider:change", this.saveOptions);
+
     this.overlapOption = new MDCCheckbox(document.querySelector(".form_advanced_overlap_checkbox")!);
     this.overlapOption.listen("MDCCheckbox:change", this.saveOptions);
 
     const overlapFormField: MDCFormField = new MDCFormField(document.querySelector(".form_advanced_overlap")!);
     overlapFormField.input = this.overlapOption;
-
-    this.opacityOption = new MDCSlider(document.querySelector(".form_advanced_opacity_input")!);
-    this.opacityOption.listen("MDCSlider:change", this.saveOptions);
-
-    this.restoreOptions();
-    this.drawAdvancedButtonArrow();
 
     const advancedButton: HTMLCanvasElement = document.getElementById("form_advanced-button")! as HTMLCanvasElement;
     advancedButton.addEventListener("click", this.handleAdvancedButtonClick);
@@ -49,6 +47,11 @@ class Options {
     this.textLengthOption.addEventListener("change", this.saveOptions);
     this.levelOption.addEventListener("change", this.saveOptions);
     this.resetOption.addEventListener("click", this.resetOptions);
+
+    MDCRipple.attachTo(document.getElementById("form_reset")!);
+
+    this.drawAdvancedButtonArrow();
+    this.restoreOptions();
   }
 
   private saveOptions = (): void => {
@@ -148,10 +151,10 @@ class Options {
     arrowContext.beginPath();
     arrowContext.moveTo(0, 1);
     arrowContext.quadraticCurveTo(0, 0, 1, 0);
-    arrowContext.lineTo(10, 5);
-    arrowContext.quadraticCurveTo(11, 6, 10, 7);
-    arrowContext.lineTo(1, 11);
-    arrowContext.quadraticCurveTo(0, 11, 0, 10);
+    arrowContext.lineTo(8, 4);
+    arrowContext.quadraticCurveTo(9, 5, 8, 6);
+    arrowContext.lineTo(1, 9);
+    arrowContext.quadraticCurveTo(0, 10, 0, 9);
     arrowContext.lineTo(0, 1);
     arrowContext.fillStyle = "#c8c8c8";
     arrowContext.fill();
