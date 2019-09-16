@@ -1,3 +1,4 @@
+const autoprefixer = require("autoprefixer");
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
@@ -5,7 +6,8 @@ module.exports = {
     soc: "./src/ts/soc.ts",
     filterHeading: "./src/ts/filterHeading.ts",
     background: "./src/ts/background.ts",
-    options: "./src/ts/options.ts"
+    options: "./src/ts/options.ts",
+    mdc: "./src/styles/external/material-components-web.customized.scss"
   },
   mode: "production",
   devtool: "inline-source-map",
@@ -18,7 +20,43 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"]
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              plugins: () => [autoprefixer()]
+            }
+          }
+        ]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "css/external/[name].min.css"
+            }
+          },
+          { loader: "extract-loader" },
+          { loader: "css-loader" },
+          {
+            loader: "postcss-loader",
+            options: {
+              plugins: () => [autoprefixer()]
+            }
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sassOptions: {
+                includePaths: ["./node_modules"]
+              }
+            }
+          }
+        ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -34,12 +72,15 @@ module.exports = {
     path: __dirname + "/build"
   },
   plugins: [
-    new CopyPlugin([
-      { from: "./src/manifest.json", to: "./" },
-      { from: "./src/js/external", to: "./js/external" },
-      { from: "./src/styles", to: "./css" },
-      { from: "./src/images", to: "images" },
-      { from: "./src/options.html", to: "./" }
-    ])
+    new CopyPlugin(
+      [
+        { from: "./src/manifest.json", to: "./" },
+        { from: "./src/js/external", to: "./js/external" },
+        { from: "./src/styles", to: "./css" },
+        { from: "./src/images", to: "images" },
+        { from: "./src/options.html", to: "./" }
+      ],
+      { ignore: ["**/*.scss"] }
+    )
   ]
 };
