@@ -33,12 +33,12 @@ export class HeadingMarker implements IHeadingMarker {
   private zIndex: number;
   private visibilityTimerId: number | null = null;
 
-  constructor(heading: HTMLElement, id: string, config: IConfig, store: IHeadingMarkerStore) {
+  constructor(heading: HTMLElement, id: string, text: string, config: IConfig, store: IHeadingMarkerStore) {
     this.heading = heading;
     this.id = id;
     this.config = config;
     this.store = store;
-    this.fullText = heading.innerText;
+    this.fullText = text;
     this.headingPosition = this.getPosition(this.heading);
     this.zIndex = this.zIndexMin + (config.maxLevel - parseInt(this.heading.tagName.split("h")[1], 10));
 
@@ -122,7 +122,7 @@ export class HeadingMarker implements IHeadingMarker {
         }
         break;
 
-      case TextLength.Full:
+      case TextLength.EntireText:
       default:
         this.displayText = this.fullText;
     }

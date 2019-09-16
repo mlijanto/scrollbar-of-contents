@@ -2,7 +2,7 @@ import { MDCCheckbox } from "@material/checkbox";
 import { MDCFormField } from "@material/form-field";
 import { MDCRipple } from "@material/ripple";
 import { MDCSlider } from "@material/slider";
-import { IConfig, DefaultConfig, Display, TextLength } from "./soc";
+import { IConfig, DefaultConfig, Display, TextLength, Visibility } from "./soc";
 
 class Options {
   private readonly advancedOptionsSectionHeight: number = 264;
@@ -19,19 +19,19 @@ class Options {
   private isAdvancedOptionsExpanded: boolean = false;
 
   constructor() {
-    this.config = DefaultConfig;
+    this.config = Object.assign({}, DefaultConfig);
     this.displayOption = document.getElementById("form_display")! as HTMLSelectElement;
     this.textLengthOption = document.getElementById("form_text-length")! as HTMLSelectElement;
     this.levelOption = document.getElementById("form_advanced_level")! as HTMLSelectElement;
     this.resetOption = document.getElementById("form_reset")!;
     this.advancedButtonArrow = document.getElementById("form_advanced-button_arrow")! as HTMLCanvasElement;
-    this.levelInfoTooltip = document.getElementById("tooltip-level")!;
+    this.levelInfoTooltip = document.getElementById("level-info_tooltip")!;
 
     this.opacityOption = new MDCSlider(document.querySelector(".form_advanced_opacity_input")!);
-    this.opacityOption.listen("MDCSlider:change", this.saveOptions);
+    this.opacityOption.listen("MDCSlider:change", this.handleOptionsChange);
 
     this.overlapOption = new MDCCheckbox(document.querySelector(".form_advanced_overlap_checkbox")!);
-    this.overlapOption.listen("MDCCheckbox:change", this.saveOptions);
+    this.overlapOption.listen("change", this.handleOptionsChange);
 
     const overlapFormField: MDCFormField = new MDCFormField(document.querySelector(".form_advanced_overlap")!);
     overlapFormField.input = this.overlapOption;
@@ -39,14 +39,14 @@ class Options {
     const advancedButton: HTMLCanvasElement = document.getElementById("form_advanced-button")! as HTMLCanvasElement;
     advancedButton.addEventListener("click", this.handleAdvancedButtonClick);
 
-    const levelInfo: HTMLElement = document.getElementById("form_advanced_info-level")!;
+    this.displayOption.addEventListener("change", this.handleOptionsChange);
+    this.textLengthOption.addEventListener("change", this.handleOptionsChange);
+    this.levelOption.addEventListener("change", this.handleOptionsChange);
+    this.resetOption.addEventListener("click", this.resetOptions);
+
+    const levelInfo: HTMLElement = document.getElementById("form_advanced_level-info")!;
     levelInfo.addEventListener("mouseover", this.handleLevelInfoMouseOver);
     levelInfo.addEventListener("mouseout", this.handleLevelInfoMouseOut);
-
-    this.displayOption.addEventListener("change", this.saveOptions);
-    this.textLengthOption.addEventListener("change", this.saveOptions);
-    this.levelOption.addEventListener("change", this.saveOptions);
-    this.resetOption.addEventListener("click", this.resetOptions);
 
     MDCRipple.attachTo(document.getElementById("form_reset")!);
 
@@ -54,8 +54,57 @@ class Options {
     this.restoreOptions();
   }
 
-  private saveOptions = (): void => {
-    this.config.display = this.getDisplayOptionValue();
+  private restoreOptions = (): void => {
+    chrome.storage.sync.get(Object.keys(this.config), storedOptions => {
+      if (Object.keys(storedOptions).length > 0) {
+        this.config.visibility = storedOptions.visibility;
+        this.config.display = storedOptions.display;
+        this.config.textLength = storedOptions.textLength;
+        this.config.opacity = parseFloat(storedOptions.opacity);
+        this.config.maxLevel = parseInt(storedOptions.maxLevel, 10);
+        this.config.preventOverlap = storedOptions.preventOverlap === "true" ? true : false;
+      }
+
+      this.setOptionsInputValues();
+    });
+  };
+
+  private resetOptions = (e: MouseEvent): void => {
+    e.preventDefault();
+
+    this.config = Object.assign({}, DefaultConfig);
+
+    this.storeOptions();
+    this.setOptionsInputValues();
+  };
+
+  private storeOptions = (): void => {
+    console.log("storeOptions", this.config);
+    chrome.storage.sync.set({
+      visibility: this.config.visibility,
+      display: this.config.display,
+      textLength: this.config.textLength,
+      opacity: this.config.opacity.toString(),
+      maxLevel: this.config.maxLevel.toString(),
+      preventOverlap: `${this.config.preventOverlap}`
+    });
+  };
+
+  private setOptionsInputValues = (): void => {
+    (document.getElementById(`display--${this.config.display}`)! as HTMLOptionElement).selected = true;
+    (document.getElementById(`textLength--${this.config.textLength}`) as HTMLOptionElement).selected = true;
+    (document.getElementById(`level--${this.config.maxLevel}`) as HTMLOptionElement).selected = true;
+
+    this.opacityOption.value = this.config.opacity * 100;
+
+    if (this.config.preventOverlap) {
+      this.overlapOption.checked = true;
+    } else {
+      this.overlapOption.checked = false;
+    }
+  };
+
+  private handleOptionsChange = (): void => {
     this.config.textLength = this.getTextLengthOptionValue();
     this.config.opacity = this.opacityOption.value / 100;
     this.config.maxLevel = parseInt(
@@ -64,63 +113,32 @@ class Options {
     );
     this.config.preventOverlap = this.overlapOption.checked;
 
-    chrome.storage.sync.set({
-      visibility: this.config.visibility,
-      display: this.config.display,
-      textLength: this.config.textLength,
-      opacity: this.config.opacity,
-      maxLevel: this.config.maxLevel,
-      preventOverlap: this.config.preventOverlap
-    });
+    this.setDisplayAndVisibilityOptionsValues();
+    this.storeOptions();
   };
 
-  private restoreOptions = (): void => {
-    chrome.storage.sync.get(this.config, storedItems => {
-      this.config.visibility = storedItems.visibility;
-      this.config.display = storedItems.display;
-      this.config.textLength = storedItems.textLength;
-      this.config.opacity = storedItems.opacity;
-      this.config.maxLevel = storedItems.maxLevel;
-      this.config.preventOverlap = storedItems.preventOverlap;
-
-      (document.getElementById("display--" + this.config.display)! as HTMLOptionElement).selected = true;
-      (document.getElementById("textLength--" + this.config.textLength) as HTMLOptionElement).selected = true;
-      (document.getElementById("level--" + this.config.maxLevel) as HTMLOptionElement).selected = true;
-
-      this.opacityOption.value = this.config.opacity * 100;
-
-      if (this.config.preventOverlap) {
-        this.overlapOption.checked = true;
-      } else {
-        this.overlapOption.checked = false;
-      }
-    });
-  };
-
-  private resetOptions = (): void => {
-    chrome.storage.sync.set({
-      visibility: DefaultConfig.visibility,
-      display: DefaultConfig.display,
-      textLength: DefaultConfig.textLength,
-      opacity: DefaultConfig.opacity,
-      maxLevel: DefaultConfig.maxLevel,
-      preventOverlap: DefaultConfig.preventOverlap
-    });
-  };
-
-  private getDisplayOptionValue = (): Display => {
+  private setDisplayAndVisibilityOptionsValues = (): void => {
     const value: string = (this.displayOption.children[this.displayOption.selectedIndex] as HTMLOptionElement).value;
+    // const value: string = "hidden";
+
+    console.log(value);
 
     switch (value) {
       case "maximized":
-        return Display.Maximized;
+        this.config.display = Display.Maximized;
+        this.config.visibility = Visibility.Visible;
+        break;
 
       case "minimized":
-        return Display.Minimized;
+        this.config.display = Display.Minimized;
+        this.config.visibility = Visibility.Visible;
+        break;
 
       case "hidden":
       default:
-        return Display.Hidden;
+        this.config.display = Display.Hidden;
+        this.config.visibility = Visibility.Hidden;
+        break;
     }
   };
 
@@ -130,7 +148,7 @@ class Options {
 
     switch (value) {
       case "entireText":
-        return TextLength.Full;
+        return TextLength.EntireText;
 
       case "firstTenCharacters":
         return TextLength.FirstTenCharacters;

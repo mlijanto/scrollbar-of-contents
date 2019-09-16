@@ -16,7 +16,7 @@ export enum Display {
 export enum TextLength {
   FirstThreeWords = "firstThreeWords",
   FirstTenCharacters = "firstTenCharacters",
-  Full = "full"
+  EntireText = "entireText"
 }
 
 export interface IConfig {
@@ -53,11 +53,10 @@ class Soc {
   constructor() {
     this.store = new HeadingMarkerStore();
     this.hostName = location.hostname;
+    this.config = Object.assign({}, DefaultConfig);
     this.docHeight = document.body.clientHeight;
     this.hostVisibilityOverrideStorageKey = "visibilityOverride-" + this.hostName;
     this.hostDisplayOverrideStorageKey = "displayOverride-" + this.hostName;
-
-    this.config = DefaultConfig;
 
     this.retrieveOptions();
 
@@ -91,20 +90,20 @@ class Soc {
   }
 
   private retrieveOptions = () => {
-    const storageKeys: any = Object.assign({}, this.config);
+    const storageKeys: string[] = Object.keys(this.config);
 
-    storageKeys[this.hostVisibilityOverrideStorageKey] = undefined;
-    storageKeys[this.hostDisplayOverrideStorageKey] = undefined;
+    storageKeys.push(this.hostVisibilityOverrideStorageKey);
+    storageKeys.push(this.hostDisplayOverrideStorageKey);
 
     chrome.storage.sync.get(
       storageKeys,
       (storedItems: { [key: string]: any }): void => {
-        this.config.visibility = storedItems.visibility;
-        this.config.display = storedItems.display;
-        this.config.textLength = storedItems.textLength;
-        this.config.opacity = storedItems.opacity;
-        this.config.maxLevel = storedItems.maxLevel;
-        this.config.preventOverlap = storedItems.preventOverlap;
+        this.config.visibility = storedItems.visibility || this.config.visibility;
+        this.config.display = storedItems.display || this.config.display;
+        this.config.textLength = storedItems.textLength || this.config.textLength;
+        this.config.opacity = storedItems.opacity || this.config.opacity;
+        this.config.maxLevel = storedItems.maxLevel || this.config.maxLevel;
+        this.config.preventOverlap = storedItems.preventOverlap || this.config.preventOverlap;
         this.hostVisibilityOverride = storedItems[this.hostVisibilityOverrideStorageKey];
         this.hostDisplayOverride = storedItems[this.hostDisplayOverrideStorageKey];
 
@@ -147,12 +146,21 @@ class Soc {
     this.headings = this.getHeadingsOnPage();
 
     for (let i: number = 0; i < this.headings.length; i++) {
-      const markerId: string = `soc-${i + 1}`;
-      const marker: IHeadingMarker = new HeadingMarker(this.headings[i], markerId, this.config, this.store);
+      const filteredHeading: IFilteredHeading = filterHeading(this.headings[i]);
 
-      this.store.headingMarkers.push(marker);
+      if (filteredHeading.shouldMarkHeading) {
+        const marker: IHeadingMarker = new HeadingMarker(
+          this.headings[i],
+          `soc-${i + 1}`,
+          filteredHeading.filteredHeadingText,
+          this.config,
+          this.store
+        );
 
-      body.appendChild(marker.domElement);
+        this.store.headingMarkers.push(marker);
+
+        body.appendChild(marker.domElement);
+      }
     }
 
     // If markers have not been created previously, attach listener
@@ -224,13 +232,7 @@ class Soc {
 
       if (headingsInCurrentLevel.length > 0) {
         for (let j: number = 0; j < headingsInCurrentLevel.length; j++) {
-          const heading: HTMLElement = headingsInCurrentLevel[j] as HTMLElement;
-          const filteredHeading: IFilteredHeading = filterHeading(heading);
-
-          if (filteredHeading.shouldMarkHeading) {
-            heading.innerText = filteredHeading.filteredHeadingText;
-            headings.push(heading);
-          }
+          headings.push(headingsInCurrentLevel[j] as HTMLElement);
         }
       }
     }
