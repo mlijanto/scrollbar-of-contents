@@ -7,10 +7,9 @@ export enum Visibility {
   Hidden = "hidden"
 }
 
-export enum Display {
+export enum State {
   Maximized = "maximized",
-  Minimized = "minimized",
-  Hidden = "hidden"
+  Minimized = "minimized"
 }
 
 export enum TextLength {
@@ -21,7 +20,7 @@ export enum TextLength {
 
 export interface IConfig {
   visibility: Visibility;
-  display: Display;
+  state: State;
   textLength: TextLength;
   opacity: number;
   maxLevel: number;
@@ -30,7 +29,7 @@ export interface IConfig {
 
 export const DefaultConfig: IConfig = {
   visibility: Visibility.Hidden,
-  display: Display.Hidden,
+  state: State.Maximized,
   textLength: TextLength.FirstThreeWords,
   opacity: 0.91,
   maxLevel: 3,
@@ -43,20 +42,20 @@ class Soc {
   private headings: HTMLElement[] = [];
   private config: IConfig;
   private visibility: Visibility = Visibility.Hidden;
-  private display: Display = Display.Hidden;
+  private state: State = State.Maximized;
   private hostVisibilityOverride: Visibility | undefined;
-  private hostDisplayOverride: Display | undefined;
+  private hostStateOverride: State | undefined;
   private docHeight: number;
   private hostVisibilityOverrideStorageKey: string;
-  private hostDisplayOverrideStorageKey: string;
+  private hostStateOverrideStorageKey: string;
 
   constructor() {
     this.store = new HeadingMarkerStore();
     this.hostName = location.hostname;
     this.config = Object.assign({}, DefaultConfig);
     this.docHeight = document.body.clientHeight;
-    this.hostVisibilityOverrideStorageKey = "visibilityOverride-" + this.hostName;
-    this.hostDisplayOverrideStorageKey = "displayOverride-" + this.hostName;
+    this.hostVisibilityOverrideStorageKey = `visibilityOverride:${this.hostName}`;
+    this.hostStateOverrideStorageKey = `stateOverride:${this.hostName}`;
 
     this.retrieveOptions();
 
@@ -93,33 +92,29 @@ class Soc {
     const storageKeys: string[] = Object.keys(this.config);
 
     storageKeys.push(this.hostVisibilityOverrideStorageKey);
-    storageKeys.push(this.hostDisplayOverrideStorageKey);
+    storageKeys.push(this.hostStateOverrideStorageKey);
 
     chrome.storage.sync.get(
       storageKeys,
       (storedItems: { [key: string]: any }): void => {
         this.config.visibility = storedItems.visibility || this.config.visibility;
-        this.config.display = storedItems.display || this.config.display;
+        this.config.state = storedItems.state || this.config.state;
         this.config.textLength = storedItems.textLength || this.config.textLength;
         this.config.opacity = storedItems.opacity || this.config.opacity;
         this.config.maxLevel = storedItems.maxLevel || this.config.maxLevel;
         this.config.preventOverlap = storedItems.preventOverlap || this.config.preventOverlap;
         this.hostVisibilityOverride = storedItems[this.hostVisibilityOverrideStorageKey];
-        this.hostDisplayOverride = storedItems[this.hostDisplayOverrideStorageKey];
+        this.hostStateOverride = storedItems[this.hostStateOverrideStorageKey];
 
-        // If there are overrides for current hostname, set initial visibility and display styles
-        if (this.hostVisibilityOverride) {
-          this.visibility = this.hostVisibilityOverride;
-        }
-
-        if (this.hostDisplayOverride) {
-          this.display = this.hostDisplayOverride;
-        }
+        // Set initial visibility and state
+        this.visibility = this.hostVisibilityOverride || this.config.visibility;
+        this.state = this.hostStateOverride || this.config.state;
 
         // After the options are updated, always recreate the markers if they have been created.
         if (
           this.store.isHeadingMarkersCreated ||
-          (this.config.display !== Display.Hidden && this.hostDisplayOverride !== Display.Hidden)
+          this.hostVisibilityOverride === Visibility.Visible ||
+          (this.config.visibility === Visibility.Visible && this.hostVisibilityOverride !== Visibility.Hidden)
         ) {
           this.createHeadingMarkers();
         }
@@ -202,7 +197,7 @@ class Soc {
     if (e.keyCode == 77) {
       if (e.shiftKey && e.altKey) {
         e.preventDefault();
-        this.toggleDisplay();
+        this.toggleState();
       }
     }
 
@@ -286,14 +281,14 @@ class Soc {
     }
   };
 
-  private toggleDisplay = (): void => {
+  private toggleState = (): void => {
     if (!this.store.isHeadingMarkersCreated) {
       this.createHeadingMarkers();
     }
 
-    if (this.display === Display.Maximized) {
+    if (this.state === State.Maximized) {
       this.minimizeMarkers(true);
-    } else if (this.display === Display.Minimized) {
+    } else if (this.state === State.Minimized) {
       this.maximizeMarkers(true);
     }
   };
@@ -303,10 +298,10 @@ class Soc {
       marker.maximize();
     }
 
-    this.display = Display.Maximized;
+    this.state = State.Maximized;
 
     if (shouldSetOverride && !chrome.extension.inIncognitoContext) {
-      this.updateDisplayOverride();
+      this.updateStateOverride();
     }
   };
 
@@ -315,10 +310,10 @@ class Soc {
       marker.minimize();
     }
 
-    this.display = Display.Minimized;
+    this.state = State.Minimized;
 
     if (shouldSetOverride && !chrome.extension.inIncognitoContext) {
-      this.updateDisplayOverride();
+      this.updateStateOverride();
     }
   };
 
@@ -336,15 +331,15 @@ class Soc {
   };
 
   /**
-   * Saves or removes display override for current hostname
+   * Saves or removes state override for current hostname
    */
-  private updateDisplayOverride = (): void => {
-    if (this.display !== this.config.display) {
+  private updateStateOverride = (): void => {
+    if (this.state !== this.config.state) {
       const storageItems: any = {};
-      storageItems[this.hostDisplayOverrideStorageKey] = this.display;
+      storageItems[this.hostStateOverrideStorageKey] = this.state;
       chrome.storage.sync.set(storageItems);
     } else {
-      chrome.storage.sync.remove(this.hostDisplayOverrideStorageKey);
+      chrome.storage.sync.remove(this.hostStateOverrideStorageKey);
     }
   };
 }

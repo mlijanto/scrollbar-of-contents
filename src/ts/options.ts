@@ -2,7 +2,7 @@ import { MDCCheckbox } from "@material/checkbox";
 import { MDCFormField } from "@material/form-field";
 import { MDCRipple } from "@material/ripple";
 import { MDCSlider } from "@material/slider";
-import { IConfig, DefaultConfig, Display, TextLength, Visibility } from "./soc";
+import { IConfig, DefaultConfig, Visibility, State, TextLength } from "./soc";
 
 class Options {
   private readonly advancedOptionsSectionHeight: number = 264;
@@ -58,7 +58,7 @@ class Options {
     chrome.storage.sync.get(Object.keys(this.config), storedOptions => {
       if (Object.keys(storedOptions).length > 0) {
         this.config.visibility = storedOptions.visibility;
-        this.config.display = storedOptions.display;
+        this.config.state = storedOptions.state;
         this.config.textLength = storedOptions.textLength;
         this.config.opacity = parseFloat(storedOptions.opacity);
         this.config.maxLevel = parseInt(storedOptions.maxLevel, 10);
@@ -82,7 +82,7 @@ class Options {
     console.log("storeOptions", this.config);
     chrome.storage.sync.set({
       visibility: this.config.visibility,
-      display: this.config.display,
+      state: this.config.state,
       textLength: this.config.textLength,
       opacity: this.config.opacity.toString(),
       maxLevel: this.config.maxLevel.toString(),
@@ -91,7 +91,12 @@ class Options {
   };
 
   private setOptionsInputValues = (): void => {
-    (document.getElementById(`display--${this.config.display}`)! as HTMLOptionElement).selected = true;
+    if (this.config.visibility === Visibility.Visible) {
+      (document.getElementById(`display--${this.config.state}`)! as HTMLOptionElement).selected = true;
+    } else {
+      (document.getElementById("display--hidden")! as HTMLOptionElement).selected = true;
+    }
+
     (document.getElementById(`textLength--${this.config.textLength}`) as HTMLOptionElement).selected = true;
     (document.getElementById(`level--${this.config.maxLevel}`) as HTMLOptionElement).selected = true;
 
@@ -113,30 +118,26 @@ class Options {
     );
     this.config.preventOverlap = this.overlapOption.checked;
 
-    this.setDisplayAndVisibilityOptionsValues();
+    this.setVisibilityAndStateConfigValues();
     this.storeOptions();
   };
 
-  private setDisplayAndVisibilityOptionsValues = (): void => {
+  private setVisibilityAndStateConfigValues = (): void => {
     const value: string = (this.displayOption.children[this.displayOption.selectedIndex] as HTMLOptionElement).value;
-    // const value: string = "hidden";
-
-    console.log(value);
 
     switch (value) {
       case "maximized":
-        this.config.display = Display.Maximized;
         this.config.visibility = Visibility.Visible;
+        this.config.state = State.Maximized;
         break;
 
       case "minimized":
-        this.config.display = Display.Minimized;
         this.config.visibility = Visibility.Visible;
+        this.config.state = State.Minimized;
         break;
 
       case "hidden":
       default:
-        this.config.display = Display.Hidden;
         this.config.visibility = Visibility.Hidden;
         break;
     }

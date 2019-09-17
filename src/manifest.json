@@ -25,6 +25,6 @@
       "run_at": "document_end"
     }
   ],
-  "permissions": ["<all_urls>", "tabs", "storage"],
+  "permissions": ["activeTab", "tabs", "storage"],
   "incognito": "spanning"
 }

@@ -1,4 +1,4 @@
-import { IConfig, TextLength } from "./soc";
+import { IConfig, State, TextLength } from "./soc";
 import { IHeadingMarkerStore } from "./headingMarkerStore";
 
 interface IPosition {
@@ -135,7 +135,7 @@ export class HeadingMarker implements IHeadingMarker {
     this.markerContent.setAttribute("class", "soc-marker__text");
     this.markerContent.innerHTML = this.displayText;
 
-    if (this.config.display === "minimized") {
+    if (this.config.state === State.Minimized) {
       this.markerContent.style.display = "none";
     }
 
@@ -153,7 +153,7 @@ export class HeadingMarker implements IHeadingMarker {
   };
 
   private handleMouseEnter = (): void => {
-    if (this.config.display === "minimized") {
+    if (this.config.state === State.Minimized) {
       this.markerContent.style.display = "inline";
     }
 
@@ -167,7 +167,7 @@ export class HeadingMarker implements IHeadingMarker {
   private handleMouseLeave = (): void => {
     this.markerContent.innerHTML = this.displayText;
 
-    if (this.config.display === "minimized") {
+    if (this.config.state === State.Minimized) {
       this.markerContent.style.display = "none";
     }
 
