@@ -193,19 +193,18 @@ class Soc {
   };
 
   private handleKeyDown = (e: KeyboardEvent): void => {
-    // shift-alt-m
-    if (e.keyCode == 77) {
-      if (e.shiftKey && e.altKey) {
-        e.preventDefault();
-        this.toggleState();
-      }
-    }
-
-    // shift-alt-n
-    else if (e.keyCode == 78) {
+    // shift-alt-v
+    if (e.keyCode == 86) {
       if (e.shiftKey && e.altKey) {
         e.preventDefault();
         this.toggleVisibility();
+      }
+    }
+    // shift-alt-b
+    else if (e.keyCode == 66) {
+      if (e.shiftKey && e.altKey) {
+        e.preventDefault();
+        this.toggleState();
       }
     }
   };
