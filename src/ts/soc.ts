@@ -149,7 +149,8 @@ class Soc {
           `soc-${i + 1}`,
           filteredHeading.filteredHeadingText,
           this.config,
-          this.store
+          this.store,
+          this.hostStateOverride
         );
 
         this.store.headingMarkers.push(marker);

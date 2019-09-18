@@ -26,6 +26,7 @@ export class HeadingMarker implements IHeadingMarker {
   private markerContent: HTMLElement = document.createElement("span");
   private id: string;
   private config: IConfig;
+  private state: State;
   private displayText: string = "";
   private fullText: string = "";
   private headingPosition: IPosition;
@@ -33,12 +34,20 @@ export class HeadingMarker implements IHeadingMarker {
   private zIndex: number;
   private visibilityTimerId: number | null = null;
 
-  constructor(heading: HTMLElement, id: string, text: string, config: IConfig, store: IHeadingMarkerStore) {
+  constructor(
+    heading: HTMLElement,
+    id: string,
+    text: string,
+    config: IConfig,
+    store: IHeadingMarkerStore,
+    stateOverride: State = config.state
+  ) {
     this.heading = heading;
     this.id = id;
+    this.fullText = text;
     this.config = config;
     this.store = store;
-    this.fullText = text;
+    this.state = stateOverride;
     this.headingPosition = this.getPosition(this.heading);
     this.zIndex = this.zIndexMin + (config.maxLevel - parseInt(this.heading.tagName.split("h")[1], 10));
 
@@ -96,10 +105,12 @@ export class HeadingMarker implements IHeadingMarker {
 
   public maximize = (): void => {
     this.markerContent.style.display = "inline";
+    this.state = State.Maximized;
   };
 
   public minimize = (): void => {
     this.markerContent.style.display = "none";
+    this.state = State.Minimized;
   };
 
   private setDisplayText = (): void => {
@@ -135,7 +146,7 @@ export class HeadingMarker implements IHeadingMarker {
     this.markerContent.setAttribute("class", "soc-marker__text");
     this.markerContent.innerHTML = this.displayText;
 
-    if (this.config.state === State.Minimized) {
+    if (this.state === State.Minimized) {
       this.markerContent.style.display = "none";
     }
 
@@ -153,7 +164,7 @@ export class HeadingMarker implements IHeadingMarker {
   };
 
   private handleMouseEnter = (): void => {
-    if (this.config.state === State.Minimized) {
+    if (this.state === State.Minimized) {
       this.markerContent.style.display = "inline";
     }
 
@@ -167,7 +178,7 @@ export class HeadingMarker implements IHeadingMarker {
   private handleMouseLeave = (): void => {
     this.markerContent.innerHTML = this.displayText;
 
-    if (this.config.state === State.Minimized) {
+    if (this.state === State.Minimized) {
       this.markerContent.style.display = "none";
     }
 

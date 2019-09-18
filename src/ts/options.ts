@@ -79,7 +79,6 @@ class Options {
   };
 
   private storeOptions = (): void => {
-    console.log("storeOptions", this.config);
     chrome.storage.sync.set({
       visibility: this.config.visibility,
       state: this.config.state,
