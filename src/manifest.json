@@ -21,7 +21,7 @@
     {
       "matches": ["<all_urls>"],
       "css": ["css/soc.css"],
-      "js": ["js/external/jquery.min.js", "js/external/jquery.scrollto.min.js", "js/soc.js", "js/filterHeading.js"],
+      "js": ["js/soc.js", "js/filterHeading.js"],
       "run_at": "document_end"
     }
   ],

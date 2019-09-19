@@ -75,7 +75,6 @@ module.exports = {
     new CopyPlugin(
       [
         { from: "./src/manifest.json", to: "./" },
-        { from: "./src/js/external", to: "./js/external" },
         { from: "./src/styles", to: "./css" },
         { from: "./src/images", to: "images" },
         { from: "./src/options.html", to: "./" }

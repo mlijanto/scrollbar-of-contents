@@ -1,4 +1,8 @@
 body {
+  --color-background: #f1f1f1;
+  --color-foreground: #484848;
+  --color-mid: #d8d8d8;
+
   color: var(--color-foreground);
   background: -webkit-radial-gradient(
     center 0px,
@@ -8,10 +12,6 @@ body {
   );
   font-family: helvetica, arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-
-  --color-background: #f1f1f1;
-  --color-foreground: #484848;
-  --color-mid: #d8d8d8;
 }
 
 div[class^="mdc-"],
