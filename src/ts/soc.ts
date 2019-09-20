@@ -100,9 +100,14 @@ class Soc {
         this.config.visibility = storedItems.visibility || this.config.visibility;
         this.config.state = storedItems.state || this.config.state;
         this.config.textLength = storedItems.textLength || this.config.textLength;
-        this.config.opacity = storedItems.opacity || this.config.opacity;
-        this.config.maxLevel = storedItems.maxLevel || this.config.maxLevel;
-        this.config.preventOverlap = storedItems.preventOverlap || this.config.preventOverlap;
+        this.config.opacity = storedItems.opacity ? parseFloat(storedItems.opacity) : this.config.opacity;
+        this.config.maxLevel = storedItems.maxLevel ? parseInt(storedItems.maxLevel, 10) : this.config.maxLevel;
+        this.config.preventOverlap = storedItems.preventOverlap
+          ? storedItems.preventOverlap === "true"
+            ? true
+            : false
+          : this.config.preventOverlap;
+
         this.hostVisibilityOverride = storedItems[this.hostVisibilityOverrideStorageKey];
         this.hostStateOverride = storedItems[this.hostStateOverrideStorageKey];
 
