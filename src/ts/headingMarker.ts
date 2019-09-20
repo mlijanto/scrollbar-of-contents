@@ -22,7 +22,7 @@ export class HeadingMarker implements IHeadingMarker {
 
   private store: IHeadingMarkerStore;
   private heading: HTMLElement;
-  private marker: HTMLElement = document.createElement("div");
+  private marker: HTMLElement = document.createElement("button");
   private markerContent: HTMLElement = document.createElement("span");
   private id: string;
   private config: IConfig;
@@ -71,8 +71,8 @@ export class HeadingMarker implements IHeadingMarker {
     if (this.config.preventOverlap) {
       for (let i: number = 0; i < this.store.reservedYPositions.length; i++) {
         if (
-          this.store.reservedYPositions[i] >= this.markerPosition.top &&
-          this.store.reservedYPositions[i] <= this.markerPosition.top + this.reservedMarkerHeight
+          this.store.reservedYPositions[this.markerPosition.top] ||
+          this.store.reservedYPositions[this.markerPosition.top + this.reservedMarkerHeight - 1]
         ) {
           this.markerPosition.top++;
         }
@@ -80,7 +80,7 @@ export class HeadingMarker implements IHeadingMarker {
 
       // Reserve Y positions needed to show the marker
       for (let i: number = 0; i < this.reservedMarkerHeight; i++) {
-        this.store.reservedYPositions.push(this.markerPosition.top + i);
+        this.store.reservedYPositions[this.markerPosition.top + i] = 1;
       }
     }
 
