@@ -4,7 +4,12 @@ export interface IFilteredHeading {
 }
 
 export const filterHeading = (heading: HTMLElement): IFilteredHeading => {
-  const headingText: string = heading.innerText.toLowerCase();
+  // Trim whitespace, remove newline characters, replace multiple whitespaces with a single whitespace, and convert to lower case.
+  const headingText: string = heading.innerText
+    .trim()
+    .replace(/\r?\n|\r/g, "")
+    .replace(/ +/gm, " ")
+    .toLowerCase();
 
   let filteredHeadingText: string = "";
 

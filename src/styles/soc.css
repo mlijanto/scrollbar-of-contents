@@ -52,6 +52,7 @@
   color: #282828;
   background-color: var(--color-high);
   box-shadow: 0px 0px 6px var(--color-low);
+  border: none;
   outline: none;
 }
 
