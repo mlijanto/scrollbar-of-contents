@@ -1,4 +1,5 @@
 # Scrollbar of Contents
+![Chrome Web Store](https://img.shields.io/chrome-web-store/users/cfmkncejaemmcobmaabfigljmnkeecdm)
 
 [https://chrome.google.com/webstore/detail/cfmkncejaemmcobmaabfigljmnkeecdm](https://chrome.google.com/webstore/detail/cfmkncejaemmcobmaabfigljmnkeecdm)
 
