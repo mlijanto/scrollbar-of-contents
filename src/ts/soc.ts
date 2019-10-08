@@ -200,14 +200,35 @@ class Soc {
 
   private handleKeyDown = (e: KeyboardEvent): void => {
     // shift-alt-v
-    if (e.keyCode == 86) {
+    if (e.keyCode === 86) {
       if (e.shiftKey && e.altKey) {
         e.preventDefault();
         this.toggleVisibility();
       }
     }
+
     // shift-alt-b
-    else if (e.keyCode == 66) {
+    else if (e.keyCode === 66) {
+      if (e.shiftKey && e.altKey) {
+        e.preventDefault();
+        this.toggleState();
+      }
+    }
+
+    /**
+     * Deprecated keyboard shortcuts
+     */
+
+    // shift-alt-n
+    if (e.keyCode === 78) {
+      if (e.shiftKey && e.altKey) {
+        e.preventDefault();
+        this.toggleVisibility();
+      }
+    }
+
+    // shift-alt-m
+    else if (e.keyCode === 77) {
       if (e.shiftKey && e.altKey) {
         e.preventDefault();
         this.toggleState();

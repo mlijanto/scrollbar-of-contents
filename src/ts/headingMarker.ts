@@ -16,7 +16,7 @@ export interface IHeadingMarker {
 }
 
 export class HeadingMarker implements IHeadingMarker {
-  private readonly zIndexMin: number = 100001;
+  private readonly zIndexMax: number = 2147483647;
   private readonly reservedMarkerHeight: number = 28;
   private readonly transitionDuration: number = 280;
 
@@ -49,7 +49,7 @@ export class HeadingMarker implements IHeadingMarker {
     this.store = store;
     this.state = stateOverride;
     this.headingPosition = this.getPosition(this.heading);
-    this.zIndex = this.zIndexMin + (config.maxLevel - parseInt(this.heading.tagName.split("h")[1], 10));
+    this.zIndex = this.zIndexMax - parseInt(this.heading.tagName.toLowerCase().split("h")[1], 10);
 
     this.setDisplayText();
     this.createMarker();
@@ -150,10 +150,7 @@ export class HeadingMarker implements IHeadingMarker {
       this.markerContent.style.display = "none";
     }
 
-    this.marker.style.zIndex = (
-      this.zIndexMin +
-      (this.config.maxLevel - parseInt(this.heading.tagName.toLowerCase().split("h")[1], 10))
-    ).toString();
+    this.marker.style.zIndex = this.zIndex.toString();
     this.marker.style.display = "none";
     this.marker.appendChild(this.markerContent);
     this.marker.addEventListener("mouseenter", this.handleMouseEnter);
@@ -169,9 +166,9 @@ export class HeadingMarker implements IHeadingMarker {
     }
 
     this.markerContent.innerText = this.fullText;
-    this.markerContent.style.zIndex = this.zIndexMin.toString();
+    this.markerContent.style.zIndex = (this.zIndexMax - this.config.maxLevel).toString();
 
-    this.marker.style.zIndex = (this.zIndexMin + this.config.maxLevel).toString();
+    this.marker.style.zIndex = this.zIndexMax.toString();
     this.marker.style.opacity = "1";
   };
 
