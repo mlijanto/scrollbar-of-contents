@@ -10,7 +10,6 @@ module.exports = {
     mdc: "./src/styles/external/material-components-web.customized.scss"
   },
   mode: "production",
-  devtool: "inline-source-map",
   module: {
     rules: [
       {
