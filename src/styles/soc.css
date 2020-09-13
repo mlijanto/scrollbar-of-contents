@@ -26,7 +26,6 @@
   line-height: 1.5em;
   text-transform: capitalize;
   text-align: left;
-  color: var(--color-high);
   background-color: var(--color-low);
   box-shadow: 0px 0px 2px var(--color-low);
   transition-property: opacity, box-shadow;
@@ -34,7 +33,6 @@
   transition-timing-function: ease-out;
   cursor: pointer;
 }
-
 .soc-marker:before {
   content: "";
   position: absolute;
@@ -48,13 +46,21 @@
   border-bottom-color: transparent;
 }
 
+.soc-marker > span {
+  color: var(--color-high);
+}
+
 .soc-marker:hover,
 .soc-marker:focus {
-  color: #282828;
   background-color: var(--color-high);
   box-shadow: 0px 0px 6px var(--color-low);
   border: none;
   outline: none;
+}
+
+.soc-marker:hover > span,
+.soc-marker:focus > span {
+  color: #282828;
 }
 
 .soc-marker:hover:before {

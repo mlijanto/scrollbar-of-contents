@@ -18,7 +18,7 @@ export interface IHeadingMarker {
 export class HeadingMarker implements IHeadingMarker {
   private readonly zIndexMax: number = 2147483647;
   private readonly reservedMarkerHeight: number = 28;
-  private readonly transitionDuration: number = 280;
+  private readonly transitionDuration: number = 200;
 
   private store: IHeadingMarkerStore;
   private heading: HTMLElement;
@@ -99,6 +99,7 @@ export class HeadingMarker implements IHeadingMarker {
     if (!this.visibilityTimerId) {
       this.visibilityTimerId = window.setTimeout((): void => {
         this.marker.style.display = "none";
+        this.visibilityTimerId = null;
       }, this.transitionDuration);
     }
   };
