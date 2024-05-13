@@ -3,7 +3,7 @@
   "author": "Martin Lijanto",
   "version": "0.4.0",
   "license": "MIT",
-  "description": "Scrollbar of Contents is a Chrome extension that creates clickable markers for all the headings of a page and places them proportionately next to the scrollbar.",
+  "description": "Scrollbar of Contents is a Chrome extension that creates clickable markers for all the headings of a page and places them proportionately on the scrollbar.",
   "repository": {
     "type": "git",
     "url": "https://github.com/mlijanto/scrollbar-of-contents.git"
