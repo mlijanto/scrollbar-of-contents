@@ -1,7 +1,12 @@
 body {
   --color-background: #f1f1f1;
   --color-foreground: #484848;
+  --color-foreground2: #686868;
+  --color-foreground3: #888888;
   --color-mid: #d8d8d8;
+  --color-advanced-background: #e8e8e8;
+  --width-checkbox-border: 2px;
+  --duration-checkbox-transition: 80ms;
 
   color: var(--color-foreground);
   background: -webkit-radial-gradient(
@@ -14,8 +19,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-div[class^="mdc-"],
-button[class^="mdc-"] {
+button {
   font-family: helvetica, arial, sans-serif;
   font-size: 14px;
   line-height: 24px;
@@ -35,7 +39,7 @@ button[class^="mdc-"] {
   margin: 24px 0 12px;
   font-size: 24px;
   text-align: center;
-  color: #686868;
+  color: var(--color-foreground2);
 }
 
 .options_header span {
@@ -61,15 +65,49 @@ select {
 
 #form_advanced-button {
   position: relative;
+  padding-inline-end: 20px;
   color: var(--color-foreground);
+  background: transparent;
+  border: none;
   cursor: pointer;
 }
 
-.form_advanced-button_arrow {
+#form_advanced-button_arrow-container {
   position: absolute;
-  top: 4px;
-  right: -18px;
+  top: 10px;
+  right: 6px;
+  transform: rotate(90deg);
   transition: transform 0.48s ease-out;
+}
+
+#form_advanced-button_arrow {
+  display: block;
+  background-color: #c8c8c8;
+  transform: rotate(-60deg) skewX(-30deg) scale(1,.866);
+}
+
+#form_advanced-button_arrow:before,
+#form_advanced-button_arrow:after {
+  content: "";
+  position: absolute;
+  display: block;
+  background-color: inherit;
+}
+
+#form_advanced-button_arrow,
+#form_advanced-button_arrow:before,
+#form_advanced-button_arrow:after {
+  width: 6px;
+  height: 6px;
+  border-top-right-radius: 30%;
+}
+
+#form_advanced-button_arrow:before {
+  transform: rotate(-135deg) skewX(-45deg) scale(1.414,.707) translate(0,-50%);
+}
+
+#form_advanced-button_arrow:after {
+  transform: rotate(135deg) skewY(-45deg) scale(.707,1.414) translate(50%);
 }
 
 #form_advanced {
@@ -77,7 +115,7 @@ select {
   height: 0;
   margin: 10px -64px 18px;
   padding: 0 64px;
-  background: linear-gradient(to bottom, var(--color-mid) 0%, #e8e8e8 1%, #e8e8e8 99%, var(--color-background) 100%);
+  background: linear-gradient(to bottom, var(--color-mid) 0%, var(--color-advanced-background) 1%, var(--color-advanced-background) 99%, var(--color-background) 100%);
   transition: height 0.48s ease-out;
   overflow: hidden;
 }
@@ -88,19 +126,48 @@ select {
 }
 
 .form_advanced_opacity {
-  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  margin-block: 8px 32px;
 }
 
 .form_advanced_opacity_input {
   display: inline-block;
   width: 132px;
-  margin: 0 8px;
+  height: 18px;
+  margin: 0 10px;
+  background-color: var(--color-advanced-background);
+  accent-color: var(--color-foreground2);
+}
+
+input[type=range] {
+  appearance: none;
+}
+
+input[type=range]:hover {
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 2px;
+  background: #c8c8c8;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-foreground2);
+  transform: translateY(-5px);
+  transition-property: all;
+  transition: 1000ms;
 }
 
 .form_advanced_opacity_input-label {
   display: inline-block;
-  color: #888;
-  transform: translateY(-19px);
+  color: var(--color-foreground3);
 }
 
 #form_advanced_level-info {
@@ -145,27 +212,100 @@ select {
   cursor: default;
   transition: opacity 0.28s;
   z-index: 10;
+  pointer-events: none;
 }
 
 .form_advanced_overlap {
-  margin: 0 -11px;
+  display: flex;
+  align-items: center;
+  grid-gap: 8px;
 }
 
-.form_advanced_overlap label {
-  padding: 0;
-  color: var(--color-foreground);
+#form_advanced_overlap_checkbox {
+  appearance: none;
+  display: inline-block;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  background: var(--color-background);
+  border-radius: 2px;
+  border: var(--width-checkbox-border) solid var(--color-foreground2);
+  transition-property: background-color;
+  transition: var(--duration-checkbox-transition) ease-out;
+  transition-delay: var(--duration-checkbox-transition);
+  cursor: pointer;
+}
+
+#form_advanced_overlap_checkbox:checked {
+  background-color: var(--color-foreground2);
+  transition-delay: 0ms;
+}
+
+#form_advanced_overlap_checkbox:before,
+#form_advanced_overlap_checkbox:after {
+  content: "";
+  position: absolute;
+  background: var(--color-background);
+  width: calc(var(--width-checkbox-border) * 2);
+  height: var(--width-checkbox-border);
+  top: 51%;
+  left: 13%;
+  transform-origin: left center;
+}
+
+#form_advanced_overlap_checkbox:before {
+  transform: rotate(45deg) translate(calc(var(--width-checkbox-border) / -2), calc(var(--width-checkbox-border) / -2)) scaleX(0);
+  transition: transform var(--duration-checkbox-transition) ease-out var(--duration-checkbox-transition);
+}
+
+#form_advanced_overlap_checkbox:after {
+  width: calc(var(--width-checkbox-border) * 6);
+  transform: rotate(-45deg) translateY(calc(var(--width-checkbox-border) * 2)) scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-checkbox-transition) ease-out;
+}
+
+#form_advanced_overlap_checkbox:checked:before {
+  transform: rotate(45deg) translate(calc(var(--width-checkbox-border) / -2), calc(var(--width-checkbox-border) / -2)) scaleX(1);
+  transition: transform var(--duration-checkbox-transition) ease-out;
+}
+
+#form_advanced_overlap_checkbox:checked:after {
+  width: calc(var(--width-checkbox-border) * 6);
+  transform: rotate(-45deg) translateY(calc(var(--width-checkbox-border) * 2)) scaleX(1);
+  transition: transform var(--duration-checkbox-transition) ease-in-out var(--duration-checkbox-transition);
 }
 
 #form_reset {
+  padding: 8px 18px;
+  background-color: var(--color-mid);
+  border: none;
+  border-radius: 4px;
   letter-spacing: initial;
   text-transform: none;
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2) ,0px 2px 2px 0px rgba(0,0,0,0.13), 0px 1px 5px 0px rgba(0,0,0,0.1);
+  transition-property: box-shadow;
+  transition: 300ms ease-out;
+  cursor: pointer;
+}
+
+#form_reset:hover,
+#form_reset:focus-visible {
+  background-color: #c8c8c8;
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+#form_reset:active {
+  background-color: #a8a8a8;
+  box-shadow: 0px 1px 4px -1px rgba(0,0,0,0.3),0px 3px 5px 0px rgba(0,0,0,0.18),0px 1px 10px 0px rgba(0,0,0,0.13);
 }
 
 .form_keyboard {
   width: 100%;
   margin: 48px 0 0;
   padding: 40px 0 0 4px;
-  color: #888;
+  color: var(--color-foreground3);
   border-top: 1px solid var(--color-mid);
 }
 

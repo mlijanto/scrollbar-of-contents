@@ -1,7 +1,7 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Scrollbar of Contents",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Creates clickable heading markers next to the scrollbar.",
   "icons": {
     "16": "images/icon_16.png",
@@ -10,10 +10,10 @@
   },
   "options_page": "options.html",
   "background": {
-    "scripts": ["js/background.js"],
-    "persistent": false
+    "service_worker": "js/background.js",
+    "type": "module"
   },
-  "browser_action": {
+  "action": {
     "default_icon": "images/icon_browser.png",
     "default_title": "Scrollbar of Contents"
   },
@@ -25,6 +25,5 @@
       "run_at": "document_end"
     }
   ],
-  "permissions": ["activeTab", "tabs", "storage"],
-  "incognito": "spanning"
+  "permissions": ["activeTab", "storage"]
 }

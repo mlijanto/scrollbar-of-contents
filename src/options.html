@@ -2,7 +2,6 @@
   <head>
     <title>Scrollbar of Contents Options</title>
     <link rel="stylesheet" type="text/css" href="css/external/normalize.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/external/material-components-web.customized.min.css" />
     <link rel="stylesheet" type="text/css" href="css/options.css" />
   </head>
   <body>
@@ -28,45 +27,24 @@
         </select>
         <br />
 
-        <a id="form_advanced-button">
+        <button id="form_advanced-button">
           <span>Advanced options</span>
-          <canvas
-            id="form_advanced-button_arrow"
-            class="form_advanced-button_arrow"
-            width="11px"
-            height="11px"
-          ></canvas>
-        </a>
+          <div id="form_advanced-button_arrow-container">
+            <div id="form_advanced-button_arrow"></div>
+          </div>
+        </button>
 
         <div id="form_advanced">
-          <label class="form_advanced_opacity_label">Markers opacity:</label>
+          <label class="form_advanced_opacity_label" for="opacity">Markers opacity:</label>
           <div class="form_advanced_opacity">
             <span class="form_advanced_opacity_input-label">transparent</span>
-            <div
-              class="mdc-slider form_advanced_opacity_input"
-              tabindex="0"
-              role="slider"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              aria-valuenow="0"
-              aria-label="Opacity value"
-            >
-              <div class="mdc-slider__track-container">
-                <div class="mdc-slider__track"></div>
-              </div>
-              <div class="mdc-slider__thumb-container">
-                <svg class="mdc-slider__thumb" width="21" height="21">
-                  <circle cx="10.5" cy="10.5" r="7.875"></circle>
-                </svg>
-                <div class="mdc-slider__focus-ring"></div>
-              </div>
-            </div>
+            <input class="form_advanced_opacity_input" type="range" id="opacity" name="opacity" min="0" max="100" />
             <span class="form_advanced_opacity_input-label">opaque</span>
           </div>
 
           <label for="form_advanced_level">Levels of headings shown:</label>
           <br />
-          <select id="form_advanced_level" class="">
+          <select id="form_advanced_level" class="form_advanced_level-select">
             <option id="level--1" value="1">1</option>
             <option id="level--2" value="2">2</option>
             <option id="level--3" value="3">3 (recommended)</option>
@@ -75,27 +53,15 @@
             <option id="level--6" value="6">6</option>
           </select>
 
-          <span id="form_advanced_level-info"> </span>
+          <div id="form_advanced_level-info"></div>
 
-          <div class="mdc-form-field form_advanced_overlap">
-            <div class="mdc-checkbox form_advanced_overlap_checkbox">
-              <input type="checkbox" class="mdc-checkbox__native-control" id="form_advanced_overlap_input" />
-              <div class="mdc-checkbox__background">
-                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-                  <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                </svg>
-                <div class="mdc-checkbox__mixedmark"></div>
-              </div>
-            </div>
-            <label for="form_advanced_overlap_input" class="form_advanced_overlap_label"
-              >Prevent overlapping markers</label
-            >
+          <div class="form_advanced_overlap">
+            <input type="checkbox" id="form_advanced_overlap_checkbox" name="overlap" checked />
+            <label for="form_advanced_overlap_checkbox" class="form_advanced_overlap_label">Prevent overlapping markers</label>
           </div>
         </div>
 
-        <button id="form_reset" class="mdc-button mdc-button--raised">
-          <span class="mdc-button__label">Reset options</span>
-        </button>
+        <button id="form_reset">Reset options</button>
 
         <div class="form_keyboard">
           <p>Keyboard shortcuts:</p>

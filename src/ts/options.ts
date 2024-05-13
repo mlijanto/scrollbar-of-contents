@@ -1,7 +1,3 @@
-import { MDCCheckbox } from "@material/checkbox";
-import { MDCFormField } from "@material/form-field";
-import { MDCRipple } from "@material/ripple";
-import { MDCSlider } from "@material/slider";
 import { IConfig, DefaultConfig, Visibility, State, TextLength } from "./soc";
 
 class Options {
@@ -11,11 +7,11 @@ class Options {
   private displayOption: HTMLSelectElement;
   private textLengthOption: HTMLSelectElement;
   private levelOption: HTMLSelectElement;
-  private resetOption: HTMLElement;
-  private advancedButtonArrow: HTMLCanvasElement;
+  private resetOption: HTMLButtonElement;
+  private advancedButtonArrow: HTMLDivElement;
   private levelInfoTooltip: HTMLElement;
-  private opacityOption: MDCSlider;
-  private overlapOption: MDCCheckbox;
+  private opacityOption: HTMLInputElement;
+  private overlapOption: HTMLInputElement;
   private isAdvancedOptionsExpanded: boolean = false;
 
   constructor() {
@@ -23,20 +19,17 @@ class Options {
     this.displayOption = document.getElementById("form_display")! as HTMLSelectElement;
     this.textLengthOption = document.getElementById("form_text-length")! as HTMLSelectElement;
     this.levelOption = document.getElementById("form_advanced_level")! as HTMLSelectElement;
-    this.resetOption = document.getElementById("form_reset")!;
-    this.advancedButtonArrow = document.getElementById("form_advanced-button_arrow")! as HTMLCanvasElement;
+    this.resetOption = document.getElementById("form_reset")! as HTMLButtonElement;
+    this.advancedButtonArrow = document.getElementById("form_advanced-button_arrow-container")! as HTMLDivElement;
     this.levelInfoTooltip = document.getElementById("level-info_tooltip")!;
 
-    this.opacityOption = new MDCSlider(document.querySelector(".form_advanced_opacity_input")!);
-    this.opacityOption.listen("MDCSlider:change", this.handleOptionsChange);
+    this.opacityOption = document.querySelector(".form_advanced_opacity_input")!;
+    this.opacityOption.addEventListener("input", this.handleOptionsChange);
 
-    this.overlapOption = new MDCCheckbox(document.querySelector(".form_advanced_overlap_checkbox")!);
-    this.overlapOption.listen("change", this.handleOptionsChange);
+    this.overlapOption = document.querySelector("#form_advanced_overlap_checkbox")!;
+    this.overlapOption.addEventListener("change", this.handleOptionsChange);
 
-    const overlapFormField: MDCFormField = new MDCFormField(document.querySelector(".form_advanced_overlap")!);
-    overlapFormField.input = this.overlapOption;
-
-    const advancedButton: HTMLCanvasElement = document.getElementById("form_advanced-button")! as HTMLCanvasElement;
+    const advancedButton: HTMLButtonElement = document.getElementById("form_advanced-button")! as HTMLButtonElement;
     advancedButton.addEventListener("click", this.handleAdvancedButtonClick);
 
     this.displayOption.addEventListener("change", this.handleOptionsChange);
@@ -48,9 +41,6 @@ class Options {
     levelInfo.addEventListener("mouseover", this.handleLevelInfoMouseOver);
     levelInfo.addEventListener("mouseout", this.handleLevelInfoMouseOut);
 
-    MDCRipple.attachTo(document.getElementById("form_reset")!);
-
-    this.drawAdvancedButtonArrow();
     this.restoreOptions();
   }
 
@@ -99,7 +89,7 @@ class Options {
     (document.getElementById(`textLength--${this.config.textLength}`) as HTMLOptionElement).selected = true;
     (document.getElementById(`level--${this.config.maxLevel}`) as HTMLOptionElement).selected = true;
 
-    this.opacityOption.value = this.config.opacity * 100;
+    this.opacityOption.value = `${this.config.opacity * 100}`;
 
     if (this.config.preventOverlap) {
       this.overlapOption.checked = true;
@@ -110,7 +100,7 @@ class Options {
 
   private handleOptionsChange = (): void => {
     this.config.textLength = this.getTextLengthOptionValue();
-    this.config.opacity = this.opacityOption.value / 100;
+    this.config.opacity = parseInt(this.opacityOption.value) / 100;
     this.config.maxLevel = parseInt(
       (this.levelOption.children[this.levelOption.selectedIndex] as HTMLOptionElement).value,
       10
@@ -143,50 +133,20 @@ class Options {
   };
 
   private getTextLengthOptionValue = (): TextLength => {
-    const value: string = (this.textLengthOption.children[this.textLengthOption.selectedIndex] as HTMLOptionElement)
-      .value;
-
-    switch (value) {
-      case "entireText":
-        return TextLength.EntireText;
-
-      case "firstTenCharacters":
-        return TextLength.FirstTenCharacters;
-
-      case "firstThreeWords":
-      default:
-        return TextLength.FirstThreeWords;
-    }
+    return (this.textLengthOption.children[this.textLengthOption.selectedIndex] as HTMLOptionElement).value as TextLength;
   };
 
-  private drawAdvancedButtonArrow = (): void => {
-    const arrowContext: CanvasRenderingContext2D | null = this.advancedButtonArrow.getContext("2d");
+  private handleAdvancedButtonClick = (e: Event): void => {
+    e.preventDefault();
 
-    if (!arrowContext) {
-      return;
-    }
-
-    arrowContext.beginPath();
-    arrowContext.moveTo(0, 1);
-    arrowContext.quadraticCurveTo(0, 0, 1, 0);
-    arrowContext.lineTo(8, 4);
-    arrowContext.quadraticCurveTo(9, 5, 8, 6);
-    arrowContext.lineTo(1, 9);
-    arrowContext.quadraticCurveTo(0, 10, 0, 9);
-    arrowContext.lineTo(0, 1);
-    arrowContext.fillStyle = "#c8c8c8";
-    arrowContext.fill();
-  };
-
-  private handleAdvancedButtonClick = (): void => {
     const advancedOptions: HTMLElement = document.getElementById("form_advanced")!;
 
     if (this.isAdvancedOptionsExpanded) {
       advancedOptions.style.height = "0";
-      this.advancedButtonArrow.style.transform = "rotate(0deg)";
+      this.advancedButtonArrow.style.transform = "rotate(90deg)";
     } else {
       advancedOptions.style.height = `${this.advancedOptionsSectionHeight}px`;
-      this.advancedButtonArrow.style.transform = "rotate(90deg)";
+      this.advancedButtonArrow.style.transform = "rotate(180deg)";
     }
 
     this.isAdvancedOptionsExpanded = !this.isAdvancedOptionsExpanded;

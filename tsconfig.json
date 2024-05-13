@@ -6,7 +6,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es6",
-    "jsx": "react",
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -16,7 +15,6 @@
     "noImplicitAny": true,
     "importHelpers": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "experimentalDecorators": true
   },

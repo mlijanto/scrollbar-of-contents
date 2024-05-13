@@ -76,7 +76,7 @@ class Soc {
           }
           break;
 
-        case "browserActionClicked":
+        case "actionClicked":
           this.toggleVisibility();
           break;
       }
